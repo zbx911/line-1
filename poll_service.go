@@ -1,0 +1,69 @@
+package line
+
+import (
+	"github.com/line-api/model/go/model"
+	"strconv"
+	"strings"
+)
+
+type PollService struct {
+	client *Client
+
+	conn     *model.FTalkServiceClient
+	connTMCP *model.FTalkServiceClient
+	PollData struct {
+		LastRev       int64
+		Count         int32
+		GlobalRev     int64
+		IndividualRev int64
+	}
+}
+
+func (s *PollService) FetchOps() ([]*model.Operation, error) {
+	return s.conn.FetchOps(
+		s.client.ctx,
+		s.PollData.LastRev, s.PollData.Count,
+		s.PollData.GlobalRev, s.PollData.IndividualRev,
+	)
+}
+func (s *PollService) FetchOpsTMCP() ([]*model.Operation, error) {
+	return s.connTMCP.FetchOps(
+		s.client.ctx,
+		s.PollData.LastRev, s.PollData.Count,
+		s.PollData.GlobalRev, s.PollData.IndividualRev,
+	)
+}
+
+func (s *PollService) FetchOperations() ([]*model.Operation, error) {
+	return s.conn.FetchOperations(s.client.ctx,
+		s.PollData.LastRev, s.PollData.Count,
+	)
+}
+
+func (s *PollService) getIndividualRev(op *model.Operation) int64 {
+	if op.Param1 != "" {
+		sps := strings.Split(op.Param1, "")
+		if len(sps) != 0 {
+			res, _ := strconv.ParseInt(sps[0], 10, 64)
+			return res
+		}
+	}
+	return 0
+}
+
+func (s *PollService) getGlobalRev(op *model.Operation) int64 {
+	if op.Param2 != "" {
+		sps := strings.Split(op.Param2, "")
+		if len(sps) != 0 {
+			res, _ := strconv.ParseInt(sps[0], 10, 64)
+			return res
+		}
+	}
+	return 0
+}
+
+func (s *PollService) setRevision(rev int64) {
+	if s.PollData.LastRev < rev {
+		s.PollData.LastRev = rev
+	}
+}
