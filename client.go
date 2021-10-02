@@ -1,6 +1,7 @@
 package line
 
 import (
+	"github.com/bot-sakura/frugal"
 	"github.com/google/uuid"
 	"github.com/line-api/model/go/model"
 	"golang.org/x/xerrors"
@@ -20,6 +21,7 @@ type ClientInfo struct {
 
 // Client line client
 type Client struct {
+	ctx           frugal.FContext
 	ClientSetting *ClientSetting
 	ClientInfo    *ClientInfo
 }
@@ -35,6 +37,7 @@ func newLineDevice() *model.Device {
 // create default line client
 func newDefaultClient() *Client {
 	return &Client{
+		ctx: frugal.NewFContext(""),
 		ClientSetting: &ClientSetting{
 			AppType:   model.ApplicationType_ANDROID,
 			KeeperDir: "./keepers/",
