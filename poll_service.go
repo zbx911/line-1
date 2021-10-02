@@ -6,17 +6,19 @@ import (
 	"strings"
 )
 
+type PollData struct {
+	LastRev       int64
+	Count         int32
+	GlobalRev     int64
+	IndividualRev int64
+}
+
 type PollService struct {
 	client *Client
 
 	conn     *model.FTalkServiceClient
 	connTMCP *model.FTalkServiceClient
-	PollData struct {
-		LastRev       int64
-		Count         int32
-		GlobalRev     int64
-		IndividualRev int64
-	}
+	PollData *PollData
 }
 
 func (cl *Client) newPollService() *PollService {
