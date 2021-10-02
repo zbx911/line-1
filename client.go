@@ -24,6 +24,8 @@ type Client struct {
 	ctx           frugal.FContext
 	ClientSetting *ClientSetting
 	ClientInfo    *ClientInfo
+
+	thriftFactory *thriftFactory
 }
 
 func newLineDevice() *model.Device {
@@ -36,7 +38,7 @@ func newLineDevice() *model.Device {
 
 // create default line client
 func newDefaultClient() *Client {
-	return &Client{
+	cl := &Client{
 		ctx: frugal.NewFContext(""),
 		ClientSetting: &ClientSetting{
 			AppType:   model.ApplicationType_ANDROID,
@@ -46,6 +48,8 @@ func newDefaultClient() *Client {
 			Device: newLineDevice(),
 		},
 	}
+	cl.thriftFactory = newThriftFactory(cl)
+	return cl
 }
 
 // New create new line client
