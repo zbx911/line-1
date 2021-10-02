@@ -7,8 +7,9 @@ import (
 
 // ClientSetting line client setting
 type ClientSetting struct {
-	AppType model.ApplicationType
-	Proxy   string
+	AppType    model.ApplicationType
+	Proxy      string
+	KeeperPath string
 }
 
 // Client line client
