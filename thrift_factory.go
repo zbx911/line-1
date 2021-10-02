@@ -1,6 +1,9 @@
 package line
 
-import "github.com/line-api/model/go/model"
+import (
+	"github.com/line-api/model/go/model"
+	"net/http"
+)
 
 type thriftFactory struct {
 	client *Client
@@ -8,6 +11,13 @@ type thriftFactory struct {
 
 func newThriftFactory(cl *Client) *thriftFactory {
 	return &thriftFactory{client: cl}
+}
+
+func (f *thriftFactory) header() map[string]string {
+	return map[string]string{}
+}
+func (f *thriftFactory) httpClient() *http.Client {
+	return nil
 }
 
 func (f *thriftFactory) newPollServiceClient() *model.FTalkServiceClient {
