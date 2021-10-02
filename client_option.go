@@ -20,10 +20,10 @@ func Proxy(proxy string) ClientOption {
 	}
 }
 
-// KeeperPath set line client keepers path
-func KeeperPath(path string) ClientOption {
+// KeeperDir set line client keepers path
+func KeeperDir(path string) ClientOption {
 	return func(client *Client) error {
-		client.ClientSetting.KeeperPath = path
+		client.ClientSetting.KeeperDir = path
 		return nil
 	}
 }

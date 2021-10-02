@@ -7,9 +7,9 @@ import (
 
 // ClientSetting line client setting
 type ClientSetting struct {
-	AppType    model.ApplicationType
-	Proxy      string
-	KeeperPath string
+	AppType   model.ApplicationType
+	Proxy     string
+	KeeperDir string
 }
 
 // Client line client
@@ -21,7 +21,8 @@ type Client struct {
 func newDefaultClient() *Client {
 	return &Client{
 		ClientSetting: &ClientSetting{
-			AppType: model.ApplicationType_ANDROID,
+			AppType:   model.ApplicationType_ANDROID,
+			KeeperDir: "./keepers/",
 		},
 	}
 }
