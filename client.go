@@ -1,8 +1,10 @@
 package line
 
 import (
+	"github.com/google/uuid"
 	"github.com/line-api/model/go/model"
 	"golang.org/x/xerrors"
+	"strings"
 )
 
 // ClientSetting line client setting
@@ -12,9 +14,22 @@ type ClientSetting struct {
 	KeeperDir string
 }
 
+type ClientInfo struct {
+	Device *model.Device
+}
+
 // Client line client
 type Client struct {
 	ClientSetting *ClientSetting
+	ClientInfo    *ClientInfo
+}
+
+func newLineDevice() *model.Device {
+	uuidObj, _ := uuid.NewUUID()
+	return &model.Device{
+		Udid:        strings.Join(strings.Split(uuidObj.String(), "-"), ""),
+		DeviceModel: genRandomDeviceModel(),
+	}
 }
 
 // create default line client
@@ -23,6 +38,9 @@ func newDefaultClient() *Client {
 		ClientSetting: &ClientSetting{
 			AppType:   model.ApplicationType_ANDROID,
 			KeeperDir: "./keepers/",
+		},
+		ClientInfo: &ClientInfo{
+			Device: newLineDevice(),
 		},
 	}
 }
