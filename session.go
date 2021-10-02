@@ -10,15 +10,11 @@ func newThriftFactory(cl *Client) *thriftFactory {
 	return &thriftFactory{client: cl}
 }
 
-func (f *thriftFactory) newPollService() *model.FTalkServiceClient {
+func (f *thriftFactory) newPollServiceClient() *model.FTalkServiceClient {
 	return nil
 }
 
-func (f *thriftFactory) newPollTMCPService() *model.FTalkServiceClient {
-	return nil
-}
-
-func (f *thriftFactory) newTalkService() *model.FTalkServiceClient {
+func (f *thriftFactory) newPollTMCPServiceClient() *model.FTalkServiceClient {
 	return nil
 }
 

@@ -24,8 +24,8 @@ type PollService struct {
 func (cl *Client) newPollService() *PollService {
 	return &PollService{
 		client:   cl,
-		conn:     cl.thriftFactory.newPollService(),
-		connTMCP: cl.thriftFactory.newPollTMCPService(),
+		conn:     cl.thriftFactory.newPollServiceClient(),
+		connTMCP: cl.thriftFactory.newPollTMCPServiceClient(),
 		PollData: &PollData{},
 	}
 }
