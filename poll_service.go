@@ -19,6 +19,36 @@ type PollService struct {
 	}
 }
 
+func (s *PollService) FetchLineOperations() ([]*model.Operation, error) {
+	return s.fetchLineOperationsInternal(s.FetchOps)
+}
+
+func (s *PollService) FetchLineOperationsTMCP() ([]*model.Operation, error) {
+	return s.fetchLineOperationsInternal(s.FetchOpsTMCP)
+}
+
+func (s *PollService) fetchLineOperationsInternal(getter func() ([]*model.Operation, error)) ([]*model.Operation, error) {
+	ops, err := getter()
+	if err != nil {
+		return nil, err
+	}
+	var operations []*model.Operation
+	for _, op := range ops {
+		if op.OpType == model.OpType_END_OF_OPERATION {
+			if op.Param2 != "" {
+				s.PollData.GlobalRev = s.getGlobalRev(op)
+			}
+			if op.Param1 != "" {
+				s.PollData.IndividualRev = s.getIndividualRev(op)
+			}
+		} else {
+			operations = append(operations, op)
+		}
+		s.setRevision(op.Revision)
+	}
+	return operations, nil
+}
+
 func (s *PollService) FetchOps() ([]*model.Operation, error) {
 	return s.conn.FetchOps(
 		s.client.ctx,
