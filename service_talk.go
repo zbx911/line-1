@@ -550,7 +550,7 @@ func (cl *TalkService) GetConfigurations(reason model.SyncReason) error {
 }
 
 func (cl *TalkService) NotifyRegistrationComplete() error {
-	err := cl.conn.NotifyRegistrationComplete(cl.client.ctx, cl.client.ClientInfo.Device.Udid, cl.client.ClientSetting.GetLineApplicationHeader())
+	err := cl.conn.NotifyRegistrationComplete(cl.client.ctx, cl.client.ClientInfo.Device.Udid, cl.client.getLineApplicationHeader())
 	return err
 }
 
