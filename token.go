@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/line-api/model/go/model"
+	"golang.org/x/xerrors"
 	"strings"
 	"time"
 )
@@ -52,7 +53,7 @@ func (cl *Client) tokenUpdater() chan error {
 		for {
 			token, err := cl.TokenManager.parseV3Token()
 			if err != nil {
-				errC <- err
+				errC <- xerrors.Errorf("stopped token updater: %w", err)
 				return
 			}
 			if time.Unix(token.ExpiredAt, 0).Add(-time.Hour*24).Unix() >= time.Now().Unix() {
@@ -61,7 +62,7 @@ func (cl *Client) tokenUpdater() chan error {
 			}
 			err = cl.RefreshV3AccessToken()
 			if err != nil {
-				errC <- err
+				errC <- xerrors.Errorf("stopped token updater: %w", err)
 				return
 			}
 		}
