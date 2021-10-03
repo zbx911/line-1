@@ -16,7 +16,8 @@ type ClientSetting struct {
 }
 
 type ClientInfo struct {
-	Device *model.Device
+	Device      *model.Device
+	PhoneNumber *model.UserPhoneNumber
 }
 
 // Client line client
