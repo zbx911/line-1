@@ -1,6 +1,7 @@
 package line
 
 import (
+	"fmt"
 	"github.com/bot-sakura/frugal"
 	"github.com/google/uuid"
 	"github.com/line-api/model/go/model"
@@ -22,11 +23,38 @@ type ClientInfo struct {
 
 // Client line client
 type Client struct {
-	ctx           frugal.FContext
-	ClientSetting *ClientSetting
-	ClientInfo    *ClientInfo
+	ctx             frugal.FContext
+	ClientSetting   *ClientSetting
+	ClientInfo      *ClientInfo
+	RequestSequence int32
+	thriftFactory   *thriftFactory
 
-	thriftFactory *thriftFactory
+	Profile  *model.Profile
+	Settings *model.Settings
+}
+
+func (cl *Client) getLineApplicationHeader() string {
+	switch cl.ClientSetting.AppType {
+	case model.ApplicationType_ANDROID:
+		return fmt.Sprintf("ANDROID\t%v\tAndroid OS\t%v", AndroidAppVersion, AndroidVersion)
+	case model.ApplicationType_ANDROIDLITE:
+		return fmt.Sprintf("ANDROIDLITE\t%v\tAndroid OS\t%v", AndroidLiteAppVersion, AndroidVersion)
+	case model.ApplicationType_IOS:
+		return "IOS\t11.9.0\tiOS\t14.5.1"
+	}
+	panic("unsupported app type")
+}
+
+func (cl *Client) getLineUserAgentHeader() string {
+	switch cl.ClientSetting.AppType {
+	case model.ApplicationType_ANDROID:
+		return fmt.Sprintf("Line/%v", AndroidAppVersion)
+	case model.ApplicationType_ANDROIDLITE:
+		return fmt.Sprintf("LLA/%v %v %v", AndroidLiteAppVersion, cl.ClientInfo.Device.DeviceModel, AndroidVersion)
+	case model.ApplicationType_IOS:
+		return "Line/11.9.0"
+	}
+	panic("unsupported app type")
 }
 
 func newLineDevice() *model.Device {
