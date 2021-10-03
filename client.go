@@ -27,6 +27,7 @@ type Client struct {
 	*ChannelService
 	*TalkService
 
+	opts            []ClientOption
 	ctx             frugal.FContext
 	ClientSetting   *ClientSetting
 	ClientInfo      *ClientInfo
@@ -35,6 +36,16 @@ type Client struct {
 
 	Profile  *model.Profile
 	Settings *model.Settings
+}
+
+func (cl *Client) executeOpts() error {
+	for idx, opt := range cl.opts {
+		err := opt(cl)
+		if err != nil {
+			return xerrors.Errorf("failed to execute %v option: %w", idx, err)
+		}
+	}
+	return nil
 }
 
 func (cl *Client) getLineApplicationHeader() string {
@@ -88,11 +99,6 @@ func newDefaultClient() *Client {
 // New create new line client
 func New(opts ...ClientOption) (*Client, error) {
 	cl := newDefaultClient()
-	for idx, opt := range opts {
-		err := opt(cl)
-		if err != nil {
-			return nil, xerrors.Errorf("failed to execute %v option: %w", idx, err)
-		}
-	}
+	cl.opts = opts
 	return cl, nil
 }
