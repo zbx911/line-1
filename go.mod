@@ -3,7 +3,9 @@ module github.com/line-api/line
 go 1.17
 
 require (
+	github.com/bot-sakura/frugal v0.0.0-20210806021528-b72d68bc7809
 	github.com/google/uuid v1.3.0
+	github.com/imroc/req v0.3.0
 	github.com/line-api/model/go/model v0.0.0-20210923111205-f01b13f17668
 	github.com/stretchr/testify v1.7.0
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1
@@ -11,7 +13,6 @@ require (
 
 require (
 	github.com/andybalholm/brotli v1.0.1 // indirect
-	github.com/bot-sakura/frugal v0.0.0-20210806021528-b72d68bc7809 // indirect
 	github.com/bot-sakura/thrift v0.0.0-20210731051304-62576fb6cfcc // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/go-stomp/stomp v2.1.3+incompatible // indirect
