@@ -28,3 +28,11 @@ func genRandomDeviceModel() string {
 	rand.Seed(time.Now().Unix())
 	return fa[rand.Intn(len(fa))] + MakeRandomStr(5)
 }
+
+func SliceToSet(slice []string) map[string]bool {
+	dict := map[string]bool{}
+	for _, val := range slice {
+		dict[val] = true
+	}
+	return dict
+}
