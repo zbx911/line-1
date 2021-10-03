@@ -16,6 +16,9 @@ func (cl *Client) newAccessTokenRefreshService() *AccessTokenRefreshService {
 }
 
 func (cl *Client) RefreshV3AccessToken() error {
+	if !cl.TokenManager.IsV3Token {
+		return nil
+	}
 	response, err := cl.Refresh(cl.TokenManager.RefreshToken)
 	if err != nil {
 		return err
