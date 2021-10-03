@@ -47,9 +47,6 @@ func (t *TokenManager) parseV3Token() (*V3TokenContent, error) {
 }
 
 func (cl *Client) tokenUpdater() chan error {
-	if !cl.TokenManager.IsV3Token {
-		return nil
-	}
 	errC := make(chan error)
 	go func() {
 		for {
