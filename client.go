@@ -38,6 +38,13 @@ type Client struct {
 	Settings *model.Settings
 }
 
+func (cl *Client) setupSessions() error {
+	cl.PollService = cl.newPollService()
+	cl.ChannelService = cl.newChannelService()
+	cl.TalkService = cl.newTalkService()
+	return nil
+}
+
 func (cl *Client) executeOpts() error {
 	for idx, opt := range cl.opts {
 		err := opt(cl)
