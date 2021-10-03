@@ -26,6 +26,7 @@ type Client struct {
 	*PollService
 	*ChannelService
 	*TalkService
+	*AccessTokenRefreshService
 
 	opts            []ClientOption
 	ctx             frugal.FContext
@@ -44,6 +45,7 @@ func (cl *Client) setupSessions() error {
 	cl.PollService = cl.newPollService()
 	cl.ChannelService = cl.newChannelService()
 	cl.TalkService = cl.newTalkService()
+	cl.AccessTokenRefreshService = cl.newAccessTokenRefreshService()
 	return nil
 }
 
