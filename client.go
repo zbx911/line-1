@@ -23,6 +23,10 @@ type ClientInfo struct {
 
 // Client line client
 type Client struct {
+	*PollService
+	*ChannelService
+	*TalkService
+
 	ctx             frugal.FContext
 	ClientSetting   *ClientSetting
 	ClientInfo      *ClientInfo
