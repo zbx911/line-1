@@ -2,6 +2,7 @@ package line
 
 import (
 	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"github.com/line-api/model/go/model"
 	"strings"
@@ -9,7 +10,62 @@ import (
 )
 
 type TokenManager struct {
-	AuthKey string
+	AuthKey      string
+	AccessToken  string
+	RefreshToken string
+	IsV3Token    bool
+}
+
+type V3TokenContent struct {
+	JwtId         string `json:"jti"`
+	Audience      string `json:"aud"`
+	IssuedAt      int64  `json:"iat"`
+	ExpiredAt     int64  `json:"exp"`
+	Scope         string `json:"scp"`
+	Rtid          string `json:"rtid"`
+	Rexp          int64  `json:"rexp"`
+	Ver           string `json:"ver"`
+	Aid           string `json:"aid"`
+	LineSessionId string `json:"lsid"`
+	Did           string `json:"did"`
+	Ctype         string `json:"ctype"`
+	Cmode         string `json:"cmode"`
+	Cid           string `json:"cid"`
+}
+
+func (t *TokenManager) parseV3Token() (*V3TokenContent, error) {
+	jsonData, err := base64.StdEncoding.DecodeString(strings.Split(t.AccessToken, ".")[1] + "==")
+	if err != nil {
+		return nil, err
+	}
+	var token *V3TokenContent
+	err = json.Unmarshal(jsonData, token)
+	if err != nil {
+		return nil, err
+	}
+	return token, nil
+}
+
+func (cl *Client) tokenUpdater() chan error {
+	if !cl.TokenManager.IsV3Token {
+		return nil
+	}
+	errC := make(chan error)
+	go func() {
+		for {
+			token, err := cl.TokenManager.parseV3Token()
+			if err != nil {
+				errC <- err
+				return
+			}
+			if time.Unix(token.ExpiredAt, 0).Add(-time.Hour*24).Unix() < time.Now().Unix() {
+				time.Sleep(time.Hour * 1)
+				continue
+			}
+			//	refresh here
+		}
+	}()
+	return errC
 }
 
 func parseAuthKey(key string) (string, string) {
