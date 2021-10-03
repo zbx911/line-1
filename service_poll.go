@@ -26,7 +26,9 @@ func (cl *Client) newPollService() *PollService {
 		client:   cl,
 		conn:     cl.thriftFactory.newPollServiceClient(),
 		connTMCP: cl.thriftFactory.newPollTMCPServiceClient(),
-		PollData: &PollData{},
+		PollData: &PollData{
+			Count: 50,
+		},
 	}
 }
 
