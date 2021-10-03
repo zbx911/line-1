@@ -20,30 +20,30 @@ func parseAuthKey(key string) (string, string) {
 func (cl *Client) GeneratePrimaryToken(authKey string) string {
 	switch cl.ClientSetting.AppType {
 	case model.ApplicationType_ANDROIDLITE:
-		return GenerateLineLiteToken(authKey)
+		return generateLineLiteToken(authKey)
 	case model.ApplicationType_ANDROID:
-		return GenerateAndroidToken(authKey)
+		return generateAndroidToken(authKey)
 	case model.ApplicationType_IOS:
-		return GenerateIOSToken(authKey)
+		return generateIOSToken(authKey)
 	}
 	return ""
 }
 
-func GenerateIOSToken(authKey string) string {
+func generateIOSToken(authKey string) string {
 	mid, key := parseAuthKey(authKey)
 	iat := base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf("iat: %v\n", time.Now().Unix()*60))) + "."
 	keyEnc, _ := base64.StdEncoding.DecodeString(key)
 	return mid + ":" + iat + "." + base64.StdEncoding.EncodeToString(SignHmacSha1(keyEnc, []byte(iat)))
 }
 
-func GenerateAndroidToken(authKey string) string {
+func generateAndroidToken(authKey string) string {
 	mid, key := parseAuthKey(authKey)
 	iat := base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf("iat: %v\n", time.Now().UnixNano()/int64(time.Millisecond)))) + "."
 	keyEnc, _ := base64.StdEncoding.DecodeString(key)
 	return mid + ":" + iat + "." + base64.StdEncoding.EncodeToString(SignHmacSha1(keyEnc, []byte(iat)))
 }
 
-func GenerateLineLiteToken(authKey string) string {
+func generateLineLiteToken(authKey string) string {
 	mid, key := parseAuthKey(authKey)
 	keyEnc, _ := base64.StdEncoding.DecodeString(key)
 	header := base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf("issuedTo: %v\niat: %v\n", mid, time.Now().UnixNano()/int64(time.Millisecond))))
