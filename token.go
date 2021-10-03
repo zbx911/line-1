@@ -58,11 +58,15 @@ func (cl *Client) tokenUpdater() chan error {
 				errC <- err
 				return
 			}
-			if time.Unix(token.ExpiredAt, 0).Add(-time.Hour*24).Unix() < time.Now().Unix() {
+			if time.Unix(token.ExpiredAt, 0).Add(-time.Hour*24).Unix() >= time.Now().Unix() {
 				time.Sleep(time.Hour * 1)
 				continue
 			}
-			//	refresh here
+			err = cl.RefreshV3AccessToken()
+			if err != nil {
+				errC <- err
+				return
+			}
 		}
 	}()
 	return errC
