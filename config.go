@@ -1,5 +1,10 @@
 package line
 
+import (
+	"math/rand"
+	"time"
+)
+
 type Path string
 
 const (
@@ -75,3 +80,19 @@ const (
 func (p Path) ToURL() string {
 	return LINE_SERVER_HOST + string(p)
 }
+
+var AndroidVersions = []string{
+	"11.0.0", "10.0.0", "9.0.0", "8.1.0", "8.0.0", "7.1.2", "7.1.1", "7.1.0", "7.0.0",
+	"6.0.1", "6.0.0", "5.1.1", "5.1.0", "5.0.2", "5.0.1", "5.0.0",
+}
+
+func getRandomAndroidVersion() string {
+	rand.Seed(time.Now().Unix())
+	return AndroidVersions[rand.Intn(len(AndroidVersions))]
+}
+
+var (
+	AndroidAppVersion     = "11.16.2"
+	AndroidVersion        = getRandomAndroidVersion()
+	AndroidLiteAppVersion = "2.17.0"
+)
