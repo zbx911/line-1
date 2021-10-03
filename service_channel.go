@@ -30,6 +30,14 @@ type ChannelService struct {
 	authToken    string
 }
 
+func (cl *Client) newChannelService() *ChannelService {
+	return &ChannelService{
+		client:       cl,
+		conn:         cl.thriftFactory.newChannelServiceClient(),
+		ChannelToken: ChannelToken{},
+	}
+}
+
 func (cl *ChannelService) InitChannelToken() *model.ChannelToken {
 	channelToken, _ := cl.conn.IssueChannelToken(cl.client.ctx, "1341209950")
 	cl.ChannelToken["1341209950"] = channelToken.ChannelAccessToken
