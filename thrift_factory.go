@@ -55,3 +55,7 @@ func (f *thriftFactory) newChannelServiceClient() *model.FChannelServiceClient {
 func (f *thriftFactory) newNewRegistrationService() *model.FPrimaryAccountInitService {
 	return nil
 }
+
+func (f *thriftFactory) newAccessTokenRefreshService() *model.FAccessTokenRefreshServiceClient {
+	return nil
+}
