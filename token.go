@@ -18,20 +18,20 @@ type TokenManager struct {
 }
 
 type V3TokenContent struct {
-	JwtId         string `json:"jti"`
-	Audience      string `json:"aud"`
-	IssuedAt      int64  `json:"iat"`
-	ExpiredAt     int64  `json:"exp"`
-	Scope         string `json:"scp"`
-	Rtid          string `json:"rtid"`
-	Rexp          int64  `json:"rexp"`
-	Ver           string `json:"ver"`
-	Aid           string `json:"aid"`
-	LineSessionId string `json:"lsid"`
-	Did           string `json:"did"`
-	Ctype         string `json:"ctype"`
-	Cmode         string `json:"cmode"`
-	Cid           string `json:"cid"`
+	JwtId                 string `json:"jti"`
+	Audience              string `json:"aud"`
+	IssuedAt              int64  `json:"iat"`
+	ExpiredAt             int64  `json:"exp"`
+	Scope                 string `json:"scp"`
+	RefreshTokenId        string `json:"rtid"`
+	RefreshTokenExpiredAt int64  `json:"rexp"`
+	Version               string `json:"ver"`
+	AuthorId              string `json:"aid"`
+	LineSessionId         string `json:"lsid"`
+	Did                   string `json:"did"`
+	ClientType            string `json:"ctype"`
+	ClientMode            string `json:"cmode"`
+	ClientId              string `json:"cid"`
 }
 
 func (t *TokenManager) parseV3Token() (*V3TokenContent, error) {
