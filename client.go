@@ -36,6 +36,8 @@ type Client struct {
 
 	Profile  *model.Profile
 	Settings *model.Settings
+
+	TokenManager *TokenManager
 }
 
 func (cl *Client) setupSessions() error {
