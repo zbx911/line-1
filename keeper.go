@@ -3,6 +3,7 @@ package line
 import (
 	"encoding/json"
 	"fmt"
+	"golang.org/x/xerrors"
 	"io/ioutil"
 	"os"
 )
@@ -44,8 +45,7 @@ func (cl *Client) SaveKeeper() error {
 		return err
 	}
 	path := fmt.Sprintf(cl.ClientSetting.KeeperDir+"/%v.keeper", cl.Profile.Mid)
-	err = WriteStructToJson(path, cl)
-	return err
+	return WriteStructToJson(path, cl)
 }
 
 func (cl *Client) LoadKeeper() error {
@@ -54,5 +54,5 @@ func (cl *Client) LoadKeeper() error {
 		_, err := ReadJsonToStruct(path, cl)
 		return err
 	}
-	return nil
+	return xerrors.New("no keeper file found")
 }
