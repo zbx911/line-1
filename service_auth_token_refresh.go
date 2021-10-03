@@ -32,8 +32,9 @@ func (s *AccessTokenRefreshService) Refresh(token string) (*model.RefreshAccessT
 	})
 }
 
-func (s *AccessTokenRefreshService) ReportRefreshedAccessToken(token string) (*model.ReportRefreshedAccessTokenResponse, error) {
-	return s.conn.ReportRefreshedAccessToken(s.client.ctx, &model.ReportRefreshedAccessTokenRequest{
+func (s *AccessTokenRefreshService) ReportRefreshedAccessToken(token string) error {
+	_, err := s.conn.ReportRefreshedAccessToken(s.client.ctx, &model.ReportRefreshedAccessTokenRequest{
 		AccessToken: token,
 	})
+	return err
 }
