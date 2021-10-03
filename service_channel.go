@@ -27,7 +27,6 @@ type ChannelService struct {
 	client       *Client
 	conn         *model.FChannelServiceClient
 	ChannelToken ChannelToken
-	authToken    string
 }
 
 func (cl *Client) newChannelService() *ChannelService {
@@ -47,7 +46,7 @@ func (cl *ChannelService) InitChannelToken() *model.ChannelToken {
 func (cl *ChannelService) UpdateGroupPicture(gid, imagePath string) error {
 	header := make(http.Header)
 	header.Set("X-Line-Application", cl.client.getLineApplicationHeader())
-	header.Set("X-Line-Access", cl.authToken)
+	header.Set("X-Line-Access", cl.client.TokenManager.AccessToken)
 	header.Set("X-Lal", "ja_jp")
 	header.Set("Quality", "95")
 	header.Set("X-Line-Region", "CA")
@@ -72,7 +71,7 @@ func (cl *ChannelService) DownloadObjMessage(msgId, path string) error {
 	r.Header.Set("X-Line-Application", cl.client.getLineApplicationHeader())
 	r.Header.Set("X-Line-Carrier", "44070")
 	r.Header.Set("User-Agent", cl.client.getLineUserAgentHeader())
-	r.Header.Set("X-Line-Access", cl.authToken)
+	r.Header.Set("X-Line-Access", cl.client.TokenManager.AccessToken)
 	r.Header.Set("X-Lal", "ja_jp")
 	r.Header.Set("X-Line-Region", "CA")
 	//r.Header.Set("Range", "bytes=0-22700")
@@ -97,7 +96,7 @@ func (cl *ChannelService) UpdateProfilePicture(path string) error {
 	host := "https://obs-jp.line-apps.com/os/p/" + cl.client.Profile.Mid
 	header := make(http.Header)
 	header.Set("X-Line-Application", cl.client.getLineApplicationHeader())
-	header.Set("X-Line-Access", cl.authToken)
+	header.Set("X-Line-Access", cl.client.TokenManager.AccessToken)
 	header.Set("X-Lal", "ja_jp")
 	header.Set("Quality", "95")
 	header.Set("X-Line-Region", "CA")
@@ -133,7 +132,7 @@ func (cl *ChannelService) UpdateProfileCoverById(objId string) error {
 		header.Set(k, v)
 	}
 	for k, v := range map[string]string{
-		"x-line-access":             cl.authToken,
+		"x-line-access":             cl.client.TokenManager.AccessToken,
 		"x-lpv":                     "1",
 		"x-line-global-config":      "discover.enable=false; follow.enable=true",
 		"x-line-bdbtemplateversion": "v1",
