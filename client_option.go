@@ -34,3 +34,10 @@ func LocalAddr(addr string) ClientOption {
 		return nil
 	}
 }
+
+func AfterTalkError(fnc map[model.TalkErrorCode]func(err error) error) ClientOption {
+	return func(client *Client) error {
+		client.ClientSetting.AfterTalkError = fnc
+		return nil
+	}
+}
