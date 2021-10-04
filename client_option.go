@@ -27,3 +27,10 @@ func KeeperDir(path string) ClientOption {
 		return nil
 	}
 }
+
+func LocalAddr(addr string) ClientOption {
+	return func(client *Client) error {
+		client.ClientSetting.LocalAddr = addr
+		return nil
+	}
+}

@@ -13,6 +13,7 @@ import (
 type ClientSetting struct {
 	AppType   model.ApplicationType
 	Proxy     string
+	LocalAddr string
 	KeeperDir string
 }
 
