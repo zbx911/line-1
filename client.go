@@ -11,10 +11,11 @@ import (
 
 // ClientSetting line client setting
 type ClientSetting struct {
-	AppType   model.ApplicationType
-	Proxy     string
-	LocalAddr string
-	KeeperDir string
+	AppType        model.ApplicationType
+	Proxy          string
+	LocalAddr      string
+	KeeperDir      string
+	AfterTalkError map[model.TalkErrorCode]func(err *model.TalkException) error
 }
 
 type ClientInfo struct {
