@@ -364,7 +364,7 @@ func (cl *TalkService) closeChatUrlManual(id string) error {
 	for key, value := range cl.client.thriftFactory.header() {
 		request.Header.Set(key, value)
 	}
-	_, err := cl.client.thriftFactory.httpClient().Do(request)
+	_, err := cl.client.thriftFactory.HttpClient().Do(request)
 	return err
 }
 
@@ -373,7 +373,7 @@ func (cl *TalkService) openChatUrlManual(id string) error {
 	for key, value := range cl.client.thriftFactory.header() {
 		request.Header.Set(key, value)
 	}
-	_, err := cl.client.thriftFactory.httpClient().Do(request)
+	_, err := cl.client.thriftFactory.HttpClient().Do(request)
 	return err
 }
 

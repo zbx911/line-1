@@ -76,7 +76,7 @@ func (cl *ChannelService) DownloadObjMessage(msgId, path string) error {
 	r.Header.Set("X-Line-Region", "CA")
 	//r.Header.Set("Range", "bytes=0-22700")
 
-	resp, err := cl.client.thriftFactory.httpClient().Do(r)
+	resp, err := cl.client.thriftFactory.HttpClient().Do(r)
 	defer resp.Body.Close()
 	if err != nil {
 		return err
@@ -196,7 +196,7 @@ func (cl *ChannelService) DownloadGroupPicture(picPath, path string) error {
 	}
 	r.Header.Set("User-Agent", "okhttp/3.12.6")
 
-	resp, err := cl.client.thriftFactory.httpClient().Do(r)
+	resp, err := cl.client.thriftFactory.HttpClient().Do(r)
 	if err != nil {
 		return err
 	}
@@ -221,7 +221,7 @@ func (cl *ChannelService) DownloadContactIcon(url, path string) error {
 	r.Host = "profile.line-scdn.net"
 	r.Header.Set("User-Agent", "okhttp/3.12.6")
 
-	resp, err := cl.client.thriftFactory.httpClient().Do(r)
+	resp, err := cl.client.thriftFactory.HttpClient().Do(r)
 	if err != nil {
 		return err
 	}
@@ -256,7 +256,7 @@ func (cl *ChannelService) GetProfileCoverId(mid string) (string, error) {
 	r.Header.Set("User-Agent", "androidapp.line/11.5.2 (Linux; U; Android 5.1.1; ja-JP; G011A Build/LMY48Z)")
 	r.Header.Set("X-Line-Mid", cl.client.Profile.Mid)
 	r.Header.Set("X-Lpv", "1")
-	resp, err := cl.client.thriftFactory.httpClient().Do(r)
+	resp, err := cl.client.thriftFactory.HttpClient().Do(r)
 	if err != nil {
 		return "", err
 	}
