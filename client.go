@@ -104,7 +104,6 @@ func newDefaultClient() *Client {
 			Device: newLineDevice(),
 		},
 	}
-	cl.thriftFactory = newThriftFactory(cl)
 	return cl
 }
 

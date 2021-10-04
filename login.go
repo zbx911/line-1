@@ -7,6 +7,7 @@ func (cl *Client) afterLogin() error {
 	if err := cl.executeOpts(); err != nil {
 		return err
 	}
+	cl.thriftFactory = newThriftFactory(cl)
 	if err := cl.setupSessions(); err != nil {
 		return err
 	}
