@@ -1,6 +1,8 @@
 package line
 
 import (
+	"github.com/bot-sakura/frugal"
+	"github.com/bot-sakura/thrift"
 	"github.com/line-api/model/go/model"
 	"net"
 	"net/http"
@@ -72,45 +74,65 @@ func (f *thriftFactory) newHeaderWithExtra(header map[string]string) map[string]
 }
 
 func (f *thriftFactory) HttpClient() *http.Client {
-	return nil
+	return f.httpClient
 }
 
 func (f *thriftFactory) newPollServiceClient() *model.FTalkServiceClient {
-	return nil
+	return model.NewFTalkServiceClient(f.newFrugalClient(PATH_LONG_POLLING.ToURL()))
 }
 
 func (f *thriftFactory) newPollTMCPServiceClient() *model.FTalkServiceClient {
-	return nil
+	return model.NewFTalkServiceClient(f.newTMCPFrugalClient(PATH_LONG_POLLING.ToURL()))
 }
 
 func (f *thriftFactory) newTalkServiceClient() *model.FTalkServiceClient {
-	return nil
+	return model.NewFTalkServiceClient(f.newFrugalClient(PATH_NORMAL.ToURL()))
 }
 
 func (f *thriftFactory) newCompactMessageServiceClient() *model.FCompactMessageServiceClient {
-	return nil
+	return model.NewFCompactMessageServiceClient(f.newFrugalClient(PATH_COMPACT_MESSAGE.ToURL()))
 }
 
 func (f *thriftFactory) newCompactE2EEMessageServiceClient() *model.FCompactMessageServiceClient {
-	return nil
+	return model.NewFCompactMessageServiceClient(f.newFrugalClient(PATH_COMPACT_E2EE_MESSAGE.ToURL()))
 }
 
 func (f *thriftFactory) newBuddyServiceClient() *model.FTalkServiceClient {
-	return nil
+	return model.NewFTalkServiceClient(f.newFrugalClient(PATH_BUDDY.ToURL()))
 }
 
 func (f *thriftFactory) newRegistrationServiceClient() *model.FTalkServiceClient {
-	return nil
+	return model.NewFTalkServiceClient(f.newFrugalClient(PATH_REGISTRATION.ToURL()))
 }
 
 func (f *thriftFactory) newChannelServiceClient() *model.FChannelServiceClient {
-	return nil
+	return model.NewFChannelServiceClient(f.newFrugalClient(PATH_CHANNEL.ToURL()))
 }
 
-func (f *thriftFactory) newNewRegistrationService() *model.FPrimaryAccountInitService {
-	return nil
+func (f *thriftFactory) newNewRegistrationService() *model.FPrimaryAccountInitServiceClient {
+	return model.NewFPrimaryAccountInitServiceClient(f.newFrugalClient(PATH_NEW_REGISTRATION.ToURL()))
 }
 
 func (f *thriftFactory) newAccessTokenRefreshService() *model.FAccessTokenRefreshServiceClient {
-	return nil
+	return model.NewFAccessTokenRefreshServiceClient(f.newFrugalClient(PATH_REFRESH_TOKEN.ToURL()))
+}
+
+func (f *thriftFactory) newFrugalClient(hostUrl string) *frugal.FServiceProvider {
+	fProtoc := frugal.NewFProtocolFactory(thrift.NewTCompactProtocolFactoryConf(&thrift.TConfiguration{}))
+	httpTrans := frugal.NewFHTTPTransportBuilder(f.httpClient, hostUrl).WithRequestHeaders(f.header()).Build()
+	if err := httpTrans.Open(); err != nil {
+		panic(err)
+	}
+	provider := frugal.NewFServiceProvider(httpTrans, fProtoc)
+	return provider
+}
+
+func (f *thriftFactory) newTMCPFrugalClient(hostUrl string) *frugal.FServiceProvider {
+	fProtoc := frugal.NewFProtocolFactory(thrift.NewTMoreCompactProtocolFactoryConfAndroidLITE(&thrift.TConfiguration{}))
+	httpTrans := frugal.NewFHTTPTransportBuilder(f.httpClient, hostUrl).WithRequestHeaders(f.header()).Build()
+	if err := httpTrans.Open(); err != nil {
+		panic(err)
+	}
+	provider := frugal.NewFServiceProvider(httpTrans, fProtoc)
+	return provider
 }
