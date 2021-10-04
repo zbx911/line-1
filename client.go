@@ -103,6 +103,9 @@ func newDefaultClient() *Client {
 		ClientInfo: &ClientInfo{
 			Device: newLineDevice(),
 		},
+		TokenManager: &TokenManager{},
+		Profile:      &model.Profile{},
+		Settings:     &model.Settings{},
 	}
 	return cl
 }
