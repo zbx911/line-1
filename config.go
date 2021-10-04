@@ -16,6 +16,7 @@ const (
 	PATH_COMPACT_PLAIN_MESSAGE                    Path = "/CA5"
 	PATH_COMPACT_E2EE_MESSAGE                     Path = "/ECA5"
 	PATH_REGISTRATION                             Path = "/api/v4/TalkService.do"
+	PATH_REFRESH_TOKEN                            Path = "/EXT/auth/tokenrefresh/v1"
 	PATH_NOTIFY_SLEEP                             Path = "/F4"
 	PATH_NOTIFY_BACKGROUND                        Path = "/B"
 	PATH_BUDDY                                    Path = "/BUDDY4"
