@@ -35,12 +35,9 @@ type V3TokenContent struct {
 }
 
 func (t *TokenManager) parseV3Token() (*V3TokenContent, error) {
-	jsonData, err := base64.StdEncoding.DecodeString(strings.Split(t.AccessToken, ".")[1] + "==")
-	if err != nil {
-		return nil, err
-	}
-	var token *V3TokenContent
-	err = json.Unmarshal(jsonData, token)
+	jsonData, _ := base64.StdEncoding.DecodeString(strings.Split(t.AccessToken, ".")[1] + "==")
+	token := &V3TokenContent{}
+	err := json.Unmarshal(jsonData, token)
 	if err != nil {
 		return nil, err
 	}
