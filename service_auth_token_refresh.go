@@ -26,6 +26,10 @@ func (cl *Client) RefreshV3AccessToken() error {
 	cl.TokenManager.RefreshToken = response.RefreshToken
 	cl.TokenManager.AccessToken = response.AccessToken
 	cl.TokenManager.IsV3Token = true
+	cl.thriftFactory = newThriftFactory(cl)
+	if err := cl.setupSessions(); err != nil {
+		return err
+	}
 	return cl.ReportRefreshedAccessToken(response.AccessToken)
 }
 
