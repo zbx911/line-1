@@ -3,7 +3,6 @@ package line
 import (
 	"encoding/json"
 	"fmt"
-	"golang.org/x/xerrors"
 	"io/ioutil"
 	"os"
 )
@@ -54,5 +53,5 @@ func (cl *Client) LoadKeeper() error {
 		_, err := ReadJsonToStruct(path, cl)
 		return err
 	}
-	return xerrors.New("no keeper file found")
+	return nil
 }
