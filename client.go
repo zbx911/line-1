@@ -108,6 +108,15 @@ func newDefaultClient() *Client {
 		Profile:      &model.Profile{},
 		Settings:     &model.Settings{},
 	}
+	cl.ClientSetting.AfterTalkError = map[model.TalkErrorCode]func(err *model.TalkException) error{
+		model.TalkErrorCode_MUST_REFRESH_V3_TOKEN: func(talkErr *model.TalkException) error {
+			err := cl.RefreshV3AccessToken()
+			if err != nil {
+				return err
+			}
+			return xerrors.Errorf("update v3 access token done: %w", talkErr)
+		},
+	}
 	return cl
 }
 
