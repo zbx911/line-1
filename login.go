@@ -23,8 +23,8 @@ func (cl *Client) LoginViaKeeper(mid string) error {
 }
 
 func (cl *Client) LoginViaPrimaryToken(token string) error {
-	cl.TokenManager.IsV3Token = false
 	cl.TokenManager.AccessToken = token
+	cl.TokenManager.IsV3Token = false
 	return cl.afterLogin()
 }
 
