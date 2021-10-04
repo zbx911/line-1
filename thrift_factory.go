@@ -57,9 +57,21 @@ func parseProxyUrl(proxy string) func(*http.Request) (*url.URL, error) {
 }
 
 func (f *thriftFactory) header() map[string]string {
-	return map[string]string{}
+	return f.defaultHeader
 }
-func (f *thriftFactory) httpClient() *http.Client {
+
+func (f *thriftFactory) newHeaderWithExtra(header map[string]string) map[string]string {
+	newHeader := make(map[string]string)
+	for k, v := range f.defaultHeader {
+		newHeader[k] = v
+	}
+	for k, v := range header {
+		newHeader[k] = v
+	}
+	return newHeader
+}
+
+func (f *thriftFactory) HttpClient() *http.Client {
 	return nil
 }
 
