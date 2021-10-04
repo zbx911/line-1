@@ -65,6 +65,7 @@ func (cl *Client) tokenUpdater() chan error {
 				errC <- xerrors.Errorf("stopped token updater: %w", err)
 				return
 			}
+			time.Sleep(time.Hour * 12)
 		}
 	}()
 	return errC
