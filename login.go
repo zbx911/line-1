@@ -1,7 +1,11 @@
 package line
 
-func (cl *Client) afterLogin() error {
+func (cl *Client) afterLoginWithKeeperLoad() error {
 	_ = cl.LoadKeeper()
+	return cl.afterLogin()
+}
+
+func (cl *Client) afterLogin() error {
 	if err := cl.executeOpts(); err != nil {
 		return err
 	}
