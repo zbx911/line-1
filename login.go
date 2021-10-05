@@ -1,9 +1,7 @@
 package line
 
 func (cl *Client) afterLogin() error {
-	if err := cl.LoadKeeper(); err != nil {
-		return err
-	}
+	_ = cl.LoadKeeper()
 	if err := cl.executeOpts(); err != nil {
 		return err
 	}
@@ -23,6 +21,9 @@ func (cl *Client) LoginViaAuthKey(key string) error {
 
 func (cl *Client) LoginViaKeeper(mid string) error {
 	cl.Profile.Mid = mid
+	if err := cl.LoadKeeper(); err != nil {
+		return err
+	}
 	return cl.afterLogin()
 }
 
