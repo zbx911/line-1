@@ -3,6 +3,7 @@ package line
 import (
 	"encoding/json"
 	"fmt"
+	"golang.org/x/xerrors"
 	"io/ioutil"
 	"os"
 )
@@ -34,6 +35,9 @@ func ReadJsonToStruct(fName string, struct_ interface{}) (interface{}, error) {
 
 func WriteStructToJson(fName string, struct_ interface{}) error {
 	file, err := json.MarshalIndent(struct_, "", "    ")
+	if err != nil {
+		return err
+	}
 	err = ioutil.WriteFile(fName, file, 0644)
 	return err
 }
@@ -53,5 +57,5 @@ func (cl *Client) LoadKeeper() error {
 		_, err := ReadJsonToStruct(path, cl)
 		return err
 	}
-	return nil
+	return xerrors.New("keeper file not found")
 }
