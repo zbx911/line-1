@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"github.com/bot-sakura/frugal"
 	"github.com/google/uuid"
+	"github.com/line-api/line/logger"
 	"github.com/line-api/model/go/model"
+	"github.com/phuslu/log"
 	"golang.org/x/xerrors"
 	"strings"
 )
@@ -16,6 +18,8 @@ type ClientSetting struct {
 	LocalAddr      string
 	KeeperDir      string
 	AfterTalkError map[model.TalkErrorCode]func(err *model.TalkException) error `json:"-"`
+
+	Logger *log.Logger
 }
 
 type ClientInfo struct {
@@ -100,6 +104,7 @@ func newDefaultClient() *Client {
 		ClientSetting: &ClientSetting{
 			AppType:   model.ApplicationType_ANDROID,
 			KeeperDir: "./keepers/",
+			Logger:    logger.New(),
 		},
 		ClientInfo: &ClientInfo{
 			Device: newLineDevice(),

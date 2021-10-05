@@ -1,6 +1,9 @@
 package line
 
-import "github.com/line-api/model/go/model"
+import (
+	"github.com/line-api/model/go/model"
+	"github.com/phuslu/log"
+)
 
 type ClientOption func(client *Client) error
 
@@ -40,6 +43,13 @@ func AfterTalkError(fncs map[model.TalkErrorCode]func(err *model.TalkException) 
 		for k, v := range fncs {
 			client.ClientSetting.AfterTalkError[k] = v
 		}
+		return nil
+	}
+}
+
+func Logger(logger *log.Logger) ClientOption {
+	return func(client *Client) error {
+		client.ClientSetting.Logger = logger
 		return nil
 	}
 }
