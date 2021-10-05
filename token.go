@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/line-api/model/go/model"
-	"golang.org/x/xerrors"
 	"strings"
 	"time"
 )
@@ -44,13 +43,12 @@ func (t *TokenManager) parseV3Token() (*V3TokenContent, error) {
 	return token, nil
 }
 
-func (cl *Client) tokenUpdater() chan error {
-	errC := make(chan error)
+func (cl *Client) tokenUpdater() {
 	go func() {
 		for {
 			token, err := cl.TokenManager.parseV3Token()
 			if err != nil {
-				errC <- xerrors.Errorf("stopped token updater: %w", err)
+				cl.ClientSetting.Logger.Error().Err(err).Msgf("stopped token updater: failed to parse v3 token")
 				return
 			}
 			if time.Unix(token.ExpiredAt, 0).Add(-time.Hour*24).Unix() >= time.Now().Unix() {
@@ -59,13 +57,12 @@ func (cl *Client) tokenUpdater() chan error {
 			}
 			err = cl.RefreshV3AccessToken()
 			if err != nil {
-				errC <- xerrors.Errorf("stopped token updater: %w", err)
+				cl.ClientSetting.Logger.Error().Err(err).Msgf("stopped token updater: failed to refresh v3 token")
 				return
 			}
 			time.Sleep(time.Hour * 12)
 		}
 	}()
-	return errC
 }
 
 func parseAuthKey(key string) (string, string) {
