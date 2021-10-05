@@ -11,6 +11,9 @@ func (cl *Client) afterLogin() error {
 	if err := cl.setupSessions(); err != nil {
 		return err
 	}
+	if cl.TokenManager.IsV3Token {
+		cl.tokenUpdater()
+	}
 	return nil
 }
 
