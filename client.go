@@ -19,7 +19,7 @@ type ClientSetting struct {
 	KeeperDir      string
 	AfterTalkError map[model.TalkErrorCode]func(err *model.TalkException) error `json:"-"`
 
-	Logger *log.Logger
+	Logger *log.Logger `json:"-"`
 }
 
 type ClientInfo struct {
