@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"github.com/line-api/line/crypt"
 	"github.com/line-api/model/go/model"
 	"strings"
 	"time"
@@ -87,14 +88,14 @@ func generateIOSToken(authKey string) string {
 	mid, key := parseAuthKey(authKey)
 	iat := base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf("iat: %v\n", time.Now().Unix()*60))) + "."
 	keyEnc, _ := base64.StdEncoding.DecodeString(key)
-	return mid + ":" + iat + "." + base64.StdEncoding.EncodeToString(SignHmacSha1(keyEnc, []byte(iat)))
+	return mid + ":" + iat + "." + base64.StdEncoding.EncodeToString(crypt.SignHmacSha1(keyEnc, []byte(iat)))
 }
 
 func generateAndroidToken(authKey string) string {
 	mid, key := parseAuthKey(authKey)
 	iat := base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf("iat: %v\n", time.Now().UnixNano()/int64(time.Millisecond)))) + "."
 	keyEnc, _ := base64.StdEncoding.DecodeString(key)
-	return mid + ":" + iat + "." + base64.StdEncoding.EncodeToString(SignHmacSha1(keyEnc, []byte(iat)))
+	return mid + ":" + iat + "." + base64.StdEncoding.EncodeToString(crypt.SignHmacSha1(keyEnc, []byte(iat)))
 }
 
 func generateLineLiteToken(authKey string) string {
@@ -103,7 +104,7 @@ func generateLineLiteToken(authKey string) string {
 	header := base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf("issuedTo: %v\niat: %v\n", mid, time.Now().UnixNano()/int64(time.Millisecond))))
 	header2 := base64.StdEncoding.EncodeToString([]byte("type: YWT\nalg: HMAC_SHA1\n"))
 
-	signature := base64.StdEncoding.EncodeToString(SignHmacSha1(keyEnc, []byte(fmt.Sprintf("%v.%v", header, header2))))
+	signature := base64.StdEncoding.EncodeToString(crypt.SignHmacSha1(keyEnc, []byte(fmt.Sprintf("%v.%v", header, header2))))
 	wToken := fmt.Sprintf("%v.%v.%v", header, header2, signature)
 	return mid + ":" + wToken
 }
