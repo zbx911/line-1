@@ -16,6 +16,12 @@ func (cl *Client) afterLogin() error {
 }
 
 func (cl *Client) LoginViaAuthKey(key string) error {
+	cl.Profile.Mid = key[:33]
+	_ = cl.LoadKeeper()
+	//AccessToken should be PrimaryToken
+	if cl.TokenManager.AccessToken != "" {
+		return cl.LoginViaPrimaryToken(cl.TokenManager.AccessToken)
+	}
 	return cl.LoginViaPrimaryToken(cl.GeneratePrimaryToken(key))
 }
 
