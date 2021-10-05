@@ -27,6 +27,7 @@ func (cl *Client) LoginViaKeeper(mid string) error {
 }
 
 func (cl *Client) LoginViaPrimaryToken(token string) error {
+	cl.Profile.Mid = token[:33]
 	cl.TokenManager.AccessToken = token
 	cl.TokenManager.IsV3Token = false
 	return cl.afterLogin()
@@ -36,5 +37,10 @@ func (cl *Client) LoginViaV3Token(accessToken, refreshToken string) error {
 	cl.TokenManager.AccessToken = accessToken
 	cl.TokenManager.RefreshToken = refreshToken
 	cl.TokenManager.IsV3Token = true
+	token, err := cl.TokenManager.parseV3Token()
+	if err != nil {
+		return err
+	}
+	cl.Profile.Mid = token.AuthorId
 	return cl.afterLogin()
 }
