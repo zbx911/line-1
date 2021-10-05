@@ -43,7 +43,7 @@ func (t *TokenManager) parseV3Token() (*V3TokenContent, error) {
 	return token, nil
 }
 
-func (cl *Client) tokenUpdater() {
+func (cl *Client) runTokenUpdaterBackGround() {
 	go func() {
 		for {
 			token, err := cl.TokenManager.parseV3Token()

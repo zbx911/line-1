@@ -14,7 +14,7 @@ func (cl *Client) afterLogin() error {
 		return err
 	}
 	if cl.TokenManager.IsV3Token {
-		cl.tokenUpdater()
+		cl.runTokenUpdaterBackGround()
 	}
 	return nil
 }
