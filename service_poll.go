@@ -63,24 +63,27 @@ func (s *PollService) fetchLineOperationsInternal(getter func() ([]*model.Operat
 }
 
 func (s *PollService) FetchOps() ([]*model.Operation, error) {
-	return s.conn.FetchOps(
+	ops, err := s.conn.FetchOps(
 		s.client.ctx,
 		s.PollData.LastRev, s.PollData.Count,
 		s.PollData.GlobalRev, s.PollData.IndividualRev,
 	)
+	return ops, s.client.afterError(err)
 }
 func (s *PollService) FetchOpsTMCP() ([]*model.Operation, error) {
-	return s.connTMCP.FetchOps(
+	ops, err := s.connTMCP.FetchOps(
 		s.client.ctx,
 		s.PollData.LastRev, s.PollData.Count,
 		s.PollData.GlobalRev, s.PollData.IndividualRev,
 	)
+	return ops, s.client.afterError(err)
 }
 
 func (s *PollService) FetchOperations() ([]*model.Operation, error) {
-	return s.conn.FetchOperations(s.client.ctx,
+	ops, err := s.conn.FetchOperations(s.client.ctx,
 		s.PollData.LastRev, s.PollData.Count,
 	)
+	return ops, s.client.afterError(err)
 }
 
 func (s *PollService) getIndividualRev(op *model.Operation) int64 {

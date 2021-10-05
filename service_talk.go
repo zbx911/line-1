@@ -39,14 +39,14 @@ type MentionData struct {
 func (cl *TalkService) React(msgId string, type_ model.PredefinedReactionType) error {
 	id, err := strconv.ParseInt(msgId, 10, 64)
 	if err != nil {
-		return err
+		return cl.client.afterError(err)
 	}
 	req := &model.ReactRequest{
 		ReqSeq:       cl.client.RequestSequence,
 		MessageId:    id,
 		ReactionType: &model.ReactionType{PredefinedReactionType: type_},
 	}
-	return cl.conn.React(cl.client.ctx, req)
+	return cl.client.afterError(cl.conn.React(cl.client.ctx, req))
 }
 
 func (cl *TalkService) SendText(to, text string) (msg *model.Message, err error) {
@@ -55,7 +55,7 @@ func (cl *TalkService) SendText(to, text string) (msg *model.Message, err error)
 		To:          to,
 		ContentType: model.ContentType_NONE,
 	})
-	return
+	return msg, cl.client.afterError(err)
 }
 func GetMidTypeFromID(id string) model.ToType {
 	switch {
@@ -70,16 +70,17 @@ func GetMidTypeFromID(id string) model.ToType {
 }
 
 func (cl *TalkService) SendCompactMessage(to, text string) (*model.Message, error) {
-	return cl.connCompactMsg.SendMessageCompact(cl.client.ctx, cl.client.RequestSequence, &model.Message{
+	msg, err := cl.connCompactMsg.SendMessageCompact(cl.client.ctx, cl.client.RequestSequence, &model.Message{
 		Text:        text,
 		ToType:      GetMidTypeFromID(to),
 		To:          to,
 		ContentType: model.ContentType_NONE,
 	})
+	return msg, cl.client.afterError(err)
 }
 
 func (cl *TalkService) UnsendMessage(id string) error {
-	return cl.conn.UnsendMessage(cl.client.ctx, cl.client.RequestSequence, id)
+	return cl.client.afterError(cl.conn.UnsendMessage(cl.client.ctx, cl.client.RequestSequence, id))
 }
 
 func (cl *TalkService) SendMessageWithMention(toID string, msgText string, mids []string) (*model.Message, error) {
@@ -99,7 +100,8 @@ func (cl *TalkService) SendMessageWithMention(toID string, msgText string, mids 
 	msg.To = toID
 	msg.Text = text
 	msg.ContentMetadata = map[string]string{"MENTION": "{\"MENTIONEES\":" + string(allData) + "}"}
-	return cl.conn.SendMessage(cl.client.ctx, cl.client.RequestSequence, msg)
+	ms, err := cl.conn.SendMessage(cl.client.ctx, cl.client.RequestSequence, msg)
+	return ms, cl.client.afterError(err)
 }
 func (cl *TalkService) SendTextMentionByList(to string, msgText string, targets []string) error {
 	listMid2 := []string{}
@@ -122,7 +124,7 @@ func (cl *TalkService) SendTextMentionByList(to string, msgText string, targets 
 		}
 		_, err := cl.SendMessageWithMention(to, listChar, listMid2)
 		if err != nil {
-			return err
+			return cl.client.afterError(err)
 		}
 		listChar = ""
 		listMid2 = []string{}
@@ -136,11 +138,12 @@ func (cl *TalkService) SendContact(toMid, contactMid string) (*model.Message, er
 	msg.ContentMetadata = map[string]string{"mid": contactMid}
 	tmp := "0"
 	msg.RelatedMessageId = &tmp
-	return cl.conn.SendMessage(cl.client.ctx, cl.client.RequestSequence, msg)
+	ms, err := cl.conn.SendMessage(cl.client.ctx, cl.client.RequestSequence, msg)
+	return ms, cl.client.afterError(err)
 }
 func (cl *TalkService) SendChatChecked(groupID, messageID string) error {
 	err := cl.conn.SendChatChecked(cl.client.ctx, cl.client.RequestSequence, groupID, messageID, 0)
-	return err
+	return cl.client.afterError(err)
 }
 
 type Mentions struct {
@@ -171,7 +174,7 @@ func (cl *TalkService) UpdateProfileName(name string) error {
 		},
 	}
 	err := cl.conn.UpdateProfileAttributes(cl.client.ctx, cl.client.RequestSequence, req)
-	return err
+	return cl.client.afterError(err)
 }
 func (cl *TalkService) UpdateProfileBio(bio string) error {
 	var req = &model.UpdateProfileAttributesRequest{
@@ -180,46 +183,46 @@ func (cl *TalkService) UpdateProfileBio(bio string) error {
 		},
 	}
 	err := cl.conn.UpdateProfileAttributes(cl.client.ctx, cl.client.RequestSequence, req)
-	return err
+	return cl.client.afterError(err)
 }
 func (cl *TalkService) GetProfile(reason model.SyncReason) (*model.Profile, error) {
 	profile, err := cl.conn.GetProfile(cl.client.ctx, reason)
 	if err != nil {
 		cl.client.Profile = profile
 	}
-	return profile, err
+	return profile, cl.client.afterError(err)
 }
 
 func (cl *TalkService) CloneProfile(mid string) error {
 	contact, err := cl.GetContact(mid)
 	if err != nil {
-		return err
+		return cl.client.afterError(err)
 	}
 	err = cl.UpdateProfileBio(contact.StatusMessage)
 	if err != nil {
-		return err
+		return cl.client.afterError(err)
 	}
 	err = cl.UpdateProfileName(contact.DisplayName)
 	if err != nil {
-		return err
+		return cl.client.afterError(err)
 	}
 	pPath := cl.client.Profile.Mid + ".jpg"
 	err = cl.client.DownloadContactIcon(contact.PicturePath, pPath)
 	if err != nil {
-		return err
+		return cl.client.afterError(err)
 	}
 	err = cl.client.UpdateProfilePicture(pPath)
 	if err != nil {
-		return err
+		return cl.client.afterError(err)
 	}
 	os.Remove(pPath)
 	oid, err := cl.client.GetProfileCoverId(mid)
 	if err != nil {
-		return err
+		return cl.client.afterError(err)
 	}
 	err = cl.client.UpdateProfileCoverById(oid)
 	if err != nil {
-		return err
+		return cl.client.afterError(err)
 	}
 	return nil
 }
@@ -236,17 +239,17 @@ func (cl *TalkService) GetChats(mids []string) ([]*model.Chat, error) {
 	}
 	chats, err := cl.conn.GetChats(cl.client.ctx, req)
 	if err != nil {
-		return nil, err
+		return nil, cl.client.afterError(err)
 	}
 	return chats.Chats, nil
 }
 func (cl *TalkService) GetChat(mid string) (*model.Chat, error) {
 	chats, err := cl.GetChats([]string{mid})
 	if err != nil {
-		return nil, err
+		return nil, cl.client.afterError(err)
 	}
 	if len(chats) > 0 {
-		return chats[0], err
+		return chats[0], cl.client.afterError(err)
 	}
 	return nil, err
 }
@@ -257,7 +260,7 @@ func (cl *TalkService) AcceptChatInvitation(gid string) error {
 		ChatMid: gid,
 	}
 	_, err := cl.conn.AcceptChatInvitation(cl.client.ctx, req)
-	return err
+	return cl.client.afterError(err)
 }
 func (cl *TalkService) AcceptChatInvitationAsync(gid string) <-chan error {
 	req := &model.AcceptChatInvitationRequest{
@@ -274,7 +277,7 @@ func (cl *TalkService) AcceptChatInvitationByTicket(gid, ticket string) error {
 		TicketId: ticket,
 	}
 	_, err := cl.conn.AcceptChatInvitationByTicket(cl.client.ctx, req)
-	return err
+	return cl.client.afterError(err)
 }
 func (cl *TalkService) AcceptChatInvitationByTicketAsync(gid, ticket string) <-chan error {
 	req := &model.AcceptChatInvitationByTicketRequest{
@@ -294,7 +297,7 @@ func (cl *TalkService) CreateChat(name string, targets []string) (*model.Chat, e
 	}
 	chat, err := cl.conn.CreateChat(cl.client.ctx, req)
 	if err != nil {
-		return nil, err
+		return nil, cl.client.afterError(err)
 	}
 	return chat.Chat, nil
 }
@@ -305,7 +308,7 @@ func (cl *TalkService) InviteIntoChat(gid string, targets []string) error {
 		TargetUserMids: SliceToSet(targets),
 	}
 	_, err := cl.conn.InviteIntoChat(cl.client.ctx, req)
-	return err
+	return cl.client.afterError(err)
 }
 func (cl *TalkService) InviteIntoChatAsync(gid string, targets []string) <-chan error {
 	req := &model.InviteIntoChatRequest{
@@ -323,9 +326,9 @@ func (cl *TalkService) ReissueChatTicket(gid string) (string, error) {
 	}
 	ticket, err := cl.conn.ReissueChatTicket(cl.client.ctx, req)
 	if err != nil {
-		return "", err
+		return "", cl.client.afterError(err)
 	}
-	return ticket.TicketId, err
+	return ticket.TicketId, nil
 }
 func (cl *TalkService) ReissueChatTicketAsync(gid string) (<-chan *model.ReissueChatTicketResponse, <-chan error) {
 	req := &model.ReissueChatTicketRequest{
@@ -341,7 +344,7 @@ func (cl *TalkService) RejectChatInvitation(gid string) error {
 		ChatMid: gid,
 	}
 	err := cl.conn.RejectChatInvitation(cl.client.ctx, req)
-	return err
+	return cl.client.afterError(err)
 }
 func (cl *TalkService) UpdateChatName(gid, name string) error {
 	chat := &model.Chat{ChatMid: gid, ChatName: name}
@@ -351,7 +354,7 @@ func (cl *TalkService) UpdateChatName(gid, name string) error {
 		UpdatedAttribute: model.UpdatedChatAttribute_NAME,
 	}
 	_, err := cl.conn.UpdateChat(cl.client.ctx, req)
-	return err
+	return cl.client.afterError(err)
 }
 func (cl *TalkService) UpdateChatURL(chatID string, typeVar bool) error {
 	if typeVar {
@@ -365,7 +368,7 @@ func (cl *TalkService) closeChatUrlManual(id string) error {
 		request.Header.Set(key, value)
 	}
 	_, err := cl.client.thriftFactory.HttpClient().Do(request)
-	return err
+	return cl.client.afterError(err)
 }
 
 func (cl *TalkService) openChatUrlManual(id string) error {
@@ -374,7 +377,7 @@ func (cl *TalkService) openChatUrlManual(id string) error {
 		request.Header.Set(key, value)
 	}
 	_, err := cl.client.thriftFactory.HttpClient().Do(request)
-	return err
+	return cl.client.afterError(err)
 }
 
 func (cl *TalkService) DeleteOtherFromChat(gid, mid string) error {
@@ -384,7 +387,7 @@ func (cl *TalkService) DeleteOtherFromChat(gid, mid string) error {
 		TargetUserMids: map[string]bool{mid: true},
 	}
 	_, err := cl.conn.DeleteOtherFromChat(cl.client.ctx, req)
-	return err
+	return cl.client.afterError(err)
 }
 func (cl *TalkService) DeleteOtherFromChatAsync(gid, mid string) <-chan error {
 	req := &model.DeleteOtherFromChatRequest{
@@ -401,7 +404,7 @@ func (cl *TalkService) DeleteSelfFromChat(gid string) error {
 		ChatMid: gid,
 	}
 	_, err := cl.conn.DeleteSelfFromChat(cl.client.ctx, req)
-	return err
+	return cl.client.afterError(err)
 }
 func (cl *TalkService) GetAllChatMids() (*model.GetAllChatMidsResponse, error) {
 	req := &model.GetAllChatMidsRequest{
@@ -409,7 +412,7 @@ func (cl *TalkService) GetAllChatMids() (*model.GetAllChatMidsResponse, error) {
 		WithInvitedChats: true,
 	}
 	res, err := cl.conn.GetAllChatMids(cl.client.ctx, req, model.SyncReason_OPERATION)
-	return res, err
+	return res, cl.client.afterError(err)
 }
 func (cl *TalkService) CancelChatInvitation(gid, mid string) error {
 	req := &model.CancelChatInvitationRequest{
@@ -418,7 +421,7 @@ func (cl *TalkService) CancelChatInvitation(gid, mid string) error {
 		TargetUserMids: map[string]bool{mid: true},
 	}
 	_, err := cl.conn.CancelChatInvitation(cl.client.ctx, req)
-	return err
+	return cl.client.afterError(err)
 }
 func (cl *TalkService) FindChatByTicket(ticket string) (*model.Chat, error) {
 	req := &model.FindChatByTicketRequest{
@@ -426,7 +429,7 @@ func (cl *TalkService) FindChatByTicket(ticket string) (*model.Chat, error) {
 	}
 	chat, err := cl.conn.FindChatByTicket(cl.client.ctx, req)
 	if err != nil {
-		return nil, err
+		return nil, cl.client.afterError(err)
 	}
 	return chat.Chat, nil
 }
@@ -440,34 +443,34 @@ func (cl *TalkService) FindAndAddContactByMid(mid string) error {
 		cl.client.ctx, cl.client.RequestSequence, mid,
 		model.ContactType_MID, "",
 	)
-	return err
+	return cl.client.afterError(err)
 }
 func (cl *TalkService) FindAndAddContactsByPhone(phones []string) (map[string]*model.Contact, error) {
 	cons, err := cl.conn.FindAndAddContactsByPhone(
 		cl.client.ctx, cl.client.RequestSequence, SliceToSet(phones), "",
 	)
-	return cons, err
+	return cons, cl.client.afterError(err)
 }
 
 func (cl *TalkService) GetContacts(mids []string) ([]*model.Contact, error) {
 	contacts, err := cl.conn.GetContacts(cl.client.ctx, mids)
-	return contacts, err
+	return contacts, cl.client.afterError(err)
 }
 func (cl *TalkService) GetContact(mid string) (*model.Contact, error) {
 	contact, err := cl.conn.GetContact(cl.client.ctx, mid)
-	return contact, err
+	return contact, cl.client.afterError(err)
 }
 func (cl *TalkService) BlockContact(mid string) error {
-	return cl.conn.BlockContact(cl.client.ctx, cl.client.RequestSequence, mid)
+	return cl.client.afterError(cl.conn.BlockContact(cl.client.ctx, cl.client.RequestSequence, mid))
 }
 
 func (cl *TalkService) UpdateContactSetting(mid, attr string, val model.UpdateContactSettingFlag) error {
 	err := cl.conn.UpdateContactSetting(cl.client.ctx, cl.client.RequestSequence, mid, val, attr)
-	return err
+	return cl.client.afterError(err)
 }
 func (cl *TalkService) GetAllContactIds() ([]string, error) {
 	res, err := cl.conn.GetAllContactIds(cl.client.ctx, model.SyncReason_OPERATION)
-	return res, err
+	return res, cl.client.afterError(err)
 }
 func (cl *TalkService) GetRecommendationIds() {
 	_, _ = cl.conn.GetRecommendationIds(cl.client.ctx, model.SyncReason_INITIALIZATION)
@@ -480,37 +483,37 @@ func (cl *TalkService) GetBlockedRecommendationIds() {
 }
 func (cl *TalkService) FindContactByTicket(ticket string) (*model.Contact, error) {
 	contact, err := cl.conn.FindContactByUserTicket(cl.client.ctx, ticket)
-	return contact, err
+	return contact, cl.client.afterError(err)
 }
 func (cl *TalkService) FindContactByUserId(id string) (*model.Contact, error) {
 	contact, err := cl.conn.FindContactByUserid(cl.client.ctx, id)
-	return contact, err
+	return contact, cl.client.afterError(err)
 }
 func (cl *TalkService) AddContactUsingTicket(ticket string) error {
 	contact, err := cl.FindContactByTicket(ticket)
 	if err != nil {
-		return err
+		return cl.client.afterError(err)
 	}
 	_, err = cl.conn.FindAndAddContactsByMid(
 		cl.client.ctx, cl.client.RequestSequence, contact.Mid,
 		model.ContactType_MID, "{\"screen\":\"urlScheme:internal\",\"spec\":\"native\",\"ticketId\":\""+ticket+"\"}",
 	)
-	return err
+	return cl.client.afterError(err)
 }
 func (cl *TalkService) AddContactByUserId(id string) error {
 	_, err := cl.FindContactByUserId(id)
 	if err != nil {
-		return err
+		return cl.client.afterError(err)
 	}
 	_, err = cl.conn.FindAndAddContactsByUserid(cl.client.ctx, cl.client.RequestSequence, id, "{\"screen\":\"friendAdd:idSearch\",\"spec\":\"native\"}")
-	return err
+	return cl.client.afterError(err)
 }
 func (cl *TalkService) AddContactGroupMember(mid string) error {
 	_, err := cl.conn.FindAndAddContactsByMid(
 		cl.client.ctx, cl.client.RequestSequence, mid,
 		model.ContactType_MID, "{\"screen\":\"groupMemberList\",\"spec\":\"native\"}",
 	)
-	return err
+	return cl.client.afterError(err)
 }
 
 /*
@@ -522,11 +525,11 @@ func (cl *TalkService) GetSettings(reason model.SyncReason) (*model.Settings, er
 	if err != nil {
 		cl.client.Settings = settings
 	}
-	return settings, err
+	return settings, cl.client.afterError(err)
 }
 func (cl *TalkService) UpdateSettingsAttributes2(attributesToUpdate map[model.PendingAgreement]bool, settings *model.Settings) error {
 	_, err := cl.conn.UpdateSettingsAttributes2(cl.client.ctx, cl.client.RequestSequence, attributesToUpdate, settings)
-	return err
+	return cl.client.afterError(err)
 }
 
 /*
@@ -535,39 +538,41 @@ Other functions
 
 func (cl *TalkService) Noop() (err error) {
 	err = cl.conn.Noop(cl.client.ctx)
-	return
+	return cl.client.afterError(err)
 }
 func (cl *TalkService) GetPendingAgreements() ([]model.PendingAgreement, error) {
 	agreements, err := cl.conn.GetPendingAgreements(cl.client.ctx)
 	if agreements == nil {
-		return nil, err
+		return nil, cl.client.afterError(err)
 	}
-	return agreements.PendingAgreements, err
+	return agreements.PendingAgreements, cl.client.afterError(err)
 }
 func (cl *TalkService) GetConfigurations(reason model.SyncReason) error {
 	_, err := cl.conn.GetConfigurations(cl.client.ctx, 0, "JP", cl.client.ClientInfo.PhoneNumber.CountryCode, "JP", "44010", reason)
-	return err
+	return cl.client.afterError(err)
 }
 
 func (cl *TalkService) NotifyRegistrationComplete() error {
 	err := cl.conn.NotifyRegistrationComplete(cl.client.ctx, cl.client.ClientInfo.Device.Udid, cl.client.getLineApplicationHeader())
-	return err
+	return cl.client.afterError(err)
 }
 
 func (cl *TalkService) FollowUser(mid string) error {
-	return cl.conn.Follow(cl.client.ctx, &model.FollowRequest{FollowMid: &model.FollowMid{Mid: mid}})
+	return cl.client.afterError(cl.conn.Follow(cl.client.ctx, &model.FollowRequest{FollowMid: &model.FollowMid{Mid: mid}}))
 }
 
 func (cl *TalkService) UnFollowUser(mid string) error {
-	return cl.conn.Unfollow(cl.client.ctx, &model.UnfollowRequest{FollowMid: &model.FollowMid{Mid: mid}})
+	return cl.client.afterError(cl.conn.Unfollow(cl.client.ctx, &model.UnfollowRequest{FollowMid: &model.FollowMid{Mid: mid}}))
 }
 
 func (cl *TalkService) CreateRoom(mids []string) (*model.Room, error) {
-	return cl.conn.CreateRoomV2(cl.client.ctx, cl.client.RequestSequence, mids)
+	room, err := cl.conn.CreateRoomV2(cl.client.ctx, cl.client.RequestSequence, mids)
+	return room, cl.client.afterError(err)
 }
 
 func (cl *TalkService) SyncContacts(cons []*model.ContactModification) (map[string]*model.ContactRegistration, error) {
-	return cl.conn.SyncContacts(cl.client.ctx, cl.client.RequestSequence, cons)
+	res, err := cl.conn.SyncContacts(cl.client.ctx, cl.client.RequestSequence, cons)
+	return res, cl.client.afterError(err)
 }
 
 func (cl *TalkService) GetContactsV2(mids []string) (*model.GetContactsV2Response, error) {
@@ -579,5 +584,6 @@ func (cl *TalkService) GetContactsV2(mids []string) (*model.GetContactsV2Respons
 		},
 		WithUserStatus: &tmp,
 	}
-	return cl.conn.GetContactsV2(cl.client.ctx, req, model.SyncReason_INITIALIZATION)
+	res, err := cl.conn.GetContactsV2(cl.client.ctx, req, model.SyncReason_INITIALIZATION)
+	return res, cl.client.afterError(err)
 }

@@ -34,14 +34,15 @@ func (cl *Client) RefreshV3AccessToken() error {
 }
 
 func (s *AccessTokenRefreshService) Refresh(token string) (*model.RefreshAccessTokenResponse, error) {
-	return s.conn.Refresh(s.client.ctx, &model.RefreshAccessTokenRequest{
+	res, err := s.conn.Refresh(s.client.ctx, &model.RefreshAccessTokenRequest{
 		RefreshToken: token,
 	})
+	return res, s.client.afterError(err)
 }
 
 func (s *AccessTokenRefreshService) ReportRefreshedAccessToken(token string) error {
 	_, err := s.conn.ReportRefreshedAccessToken(s.client.ctx, &model.ReportRefreshedAccessTokenRequest{
 		AccessToken: token,
 	})
-	return err
+	return s.client.afterError(err)
 }

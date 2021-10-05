@@ -37,46 +37,54 @@ func (cl *Client) newChannelService() *ChannelService {
 	}
 }
 
-func (cl *ChannelService) InitChannelToken() *model.ChannelToken {
-	channelToken, _ := cl.conn.IssueChannelToken(cl.client.ctx, "1341209950")
-	cl.ChannelToken["1341209950"] = channelToken.ChannelAccessToken
-	return channelToken
+func (s *ChannelService) IssueChannelToken(token string) (*model.ChannelToken, error) {
+	t, err := s.conn.IssueChannelToken(s.client.ctx, token)
+	return t, s.client.afterError(err)
 }
 
-func (cl *ChannelService) UpdateGroupPicture(gid, imagePath string) error {
+func (s *ChannelService) InitChannelToken() error {
+	channelToken, err := s.IssueChannelToken("1341209950")
+	if err != nil {
+		return err
+	}
+	s.ChannelToken["1341209950"] = channelToken.ChannelAccessToken
+	return nil
+}
+
+func (s *ChannelService) UpdateGroupPicture(gid, imagePath string) error {
 	header := make(http.Header)
-	header.Set("X-Line-Application", cl.client.getLineApplicationHeader())
-	header.Set("X-Line-Access", cl.client.TokenManager.AccessToken)
+	header.Set("X-Line-Application", s.client.getLineApplicationHeader())
+	header.Set("X-Line-Access", s.client.TokenManager.AccessToken)
 	header.Set("X-Lal", "ja_jp")
 	header.Set("Quality", "95")
 	header.Set("X-Line-Region", "CA")
 	header.Set("X-Line-Carrier", "44070")
-	header.Set("User-Agent", cl.client.getLineUserAgentHeader())
+	header.Set("User-Agent", s.client.getLineUserAgentHeader())
 	header.Set("Content-Type", "image/jpeg")
 	file, _ := os.Open(imagePath)
-	if cl.client.ClientSetting.Proxy != "" {
-		req.SetProxyUrl(cl.client.ClientSetting.Proxy)
+	if s.client.ClientSetting.Proxy != "" {
+		req.SetProxyUrl(s.client.ClientSetting.Proxy)
 	}
 	host := "https://obs-jp.line-apps.com/os/g/" + gid
 	_, err := req.Post(host, header, file)
 	return err
 }
 
-func (cl *ChannelService) DownloadObjMessage(msgId, path string) error {
+func (s *ChannelService) DownloadObjMessage(msgId, path string) error {
 	r, err := http.NewRequest("GET", "https://obs-jp.line-apps.com/r/talk/m/"+msgId, nil)
 	if err != nil {
 		return err
 	}
 	r.Host = "obs-jp.line-apps.com"
-	r.Header.Set("X-Line-Application", cl.client.getLineApplicationHeader())
+	r.Header.Set("X-Line-Application", s.client.getLineApplicationHeader())
 	r.Header.Set("X-Line-Carrier", "44070")
-	r.Header.Set("User-Agent", cl.client.getLineUserAgentHeader())
-	r.Header.Set("X-Line-Access", cl.client.TokenManager.AccessToken)
+	r.Header.Set("User-Agent", s.client.getLineUserAgentHeader())
+	r.Header.Set("X-Line-Access", s.client.TokenManager.AccessToken)
 	r.Header.Set("X-Lal", "ja_jp")
 	r.Header.Set("X-Line-Region", "CA")
 	//r.Header.Set("Range", "bytes=0-22700")
 
-	resp, err := cl.client.thriftFactory.HttpClient().Do(r)
+	resp, err := s.client.thriftFactory.HttpClient().Do(r)
 	defer resp.Body.Close()
 	if err != nil {
 		return err
@@ -92,47 +100,47 @@ func (cl *ChannelService) DownloadObjMessage(msgId, path string) error {
 	return nil
 }
 
-func (cl *ChannelService) UpdateProfilePicture(path string) error {
-	host := "https://obs-jp.line-apps.com/os/p/" + cl.client.Profile.Mid
+func (s *ChannelService) UpdateProfilePicture(path string) error {
+	host := "https://obs-jp.line-apps.com/os/p/" + s.client.Profile.Mid
 	header := make(http.Header)
-	header.Set("X-Line-Application", cl.client.getLineApplicationHeader())
-	header.Set("X-Line-Access", cl.client.TokenManager.AccessToken)
+	header.Set("X-Line-Application", s.client.getLineApplicationHeader())
+	header.Set("X-Line-Access", s.client.TokenManager.AccessToken)
 	header.Set("X-Lal", "ja_jp")
 	header.Set("Quality", "95")
 	header.Set("X-Line-Region", "CA")
 	header.Set("X-Line-Carrier", "44070")
-	header.Set("User-Agent", cl.client.getLineUserAgentHeader())
+	header.Set("User-Agent", s.client.getLineUserAgentHeader())
 	header.Set("Content-Type", "image/jpeg")
 
 	file, _ := os.Open(path)
-	if cl.client.ClientSetting.Proxy != "" {
-		req.SetProxyUrl(cl.client.ClientSetting.Proxy)
+	if s.client.ClientSetting.Proxy != "" {
+		req.SetProxyUrl(s.client.ClientSetting.Proxy)
 	}
 	_, err := req.Post(host, header, file)
 	return err
 }
 
-func (cl *ChannelService) UpdateProfileCover(path string) error {
-	oid, err := cl.UploadObjHome(path)
+func (s *ChannelService) UpdateProfileCover(path string) error {
+	oid, err := s.UploadObjHome(path)
 	if err != nil {
 		return err
 	}
-	err = cl.UpdateProfileCoverById(oid)
+	err = s.UpdateProfileCoverById(oid)
 	return err
 }
 
-func (cl *ChannelService) UpdateProfileCoverById(objId string) error {
+func (s *ChannelService) UpdateProfileCoverById(objId string) error {
 	data := map[string]string{
-		"homeId":        cl.client.Profile.Mid,
+		"homeId":        s.client.Profile.Mid,
 		"coverObjectId": objId,
 		"storyShare":    "true",
 	}
 	header := make(http.Header)
-	for k, v := range cl.client.thriftFactory.header() {
+	for k, v := range s.client.thriftFactory.header() {
 		header.Set(k, v)
 	}
 	for k, v := range map[string]string{
-		"x-line-access":             cl.client.TokenManager.AccessToken,
+		"x-line-access":             s.client.TokenManager.AccessToken,
 		"x-lpv":                     "1",
 		"x-line-global-config":      "discover.enable=false; follow.enable=true",
 		"x-line-bdbtemplateversion": "v1",
@@ -142,16 +150,16 @@ func (cl *ChannelService) UpdateProfileCoverById(objId string) error {
 	} {
 		header.Set(k, v)
 	}
-	if cl.client.ClientSetting.Proxy != "" {
-		req.SetProxyUrl(cl.client.ClientSetting.Proxy)
+	if s.client.ClientSetting.Proxy != "" {
+		req.SetProxyUrl(s.client.ClientSetting.Proxy)
 	}
 	_, err := req.Post("https://ga2.model.naver.jp/hm/api/v1/home/cover.json", header, req.BodyJSON(data))
 	return err
 }
 
-func (cl *ChannelService) UploadObjHome(path string) (string, error) {
+func (s *ChannelService) UploadObjHome(path string) (string, error) {
 	header := make(http.Header)
-	for k, v := range cl.client.thriftFactory.header() {
+	for k, v := range s.client.thriftFactory.header() {
 		header.Set(k, v)
 	}
 	hstr := fmt.Sprintf("Line_%d", time.Now().Unix())
@@ -164,7 +172,7 @@ func (cl *ChannelService) UploadObjHome(path string) (string, error) {
 	for k, v := range map[string]string{
 		"x-obs-params": genObsParam(map[string]string{
 			"name":   fmt.Sprintf("%d", time.Now().Unix()),
-			"userid": cl.client.Profile.Mid,
+			"userid": s.client.Profile.Mid,
 			"oid":    objId,
 			"type":   "image",
 			"ver":    "1.0",
@@ -174,8 +182,8 @@ func (cl *ChannelService) UploadObjHome(path string) (string, error) {
 	} {
 		header.Set(k, v)
 	}
-	if cl.client.ClientSetting.Proxy != "" {
-		req.SetProxyUrl(cl.client.ClientSetting.Proxy)
+	if s.client.ClientSetting.Proxy != "" {
+		req.SetProxyUrl(s.client.ClientSetting.Proxy)
 	}
 	_, err = req.Post("https://obs-jp.line-apps.com/myhome/c/upload.nhn", file, header)
 	if err != nil {
@@ -189,14 +197,14 @@ func genObsParam(dict map[string]string) string {
 	return base64.StdEncoding.EncodeToString(marshal)
 }
 
-func (cl *ChannelService) DownloadGroupPicture(picPath, path string) error {
+func (s *ChannelService) DownloadGroupPicture(picPath, path string) error {
 	r, err := http.NewRequest("GET", "https://profile.line-scdn.net/"+picPath, nil)
 	if err != nil {
 		return err
 	}
 	r.Header.Set("User-Agent", "okhttp/3.12.6")
 
-	resp, err := cl.client.thriftFactory.HttpClient().Do(r)
+	resp, err := s.client.thriftFactory.HttpClient().Do(r)
 	if err != nil {
 		return err
 	}
@@ -213,7 +221,7 @@ func (cl *ChannelService) DownloadGroupPicture(picPath, path string) error {
 
 }
 
-func (cl *ChannelService) DownloadContactIcon(url, path string) error {
+func (s *ChannelService) DownloadContactIcon(url, path string) error {
 	r, err := http.NewRequest("GET", "https://profile.line-scdn.net/"+url, nil)
 	if err != nil {
 		// handle err
@@ -221,7 +229,7 @@ func (cl *ChannelService) DownloadContactIcon(url, path string) error {
 	r.Host = "profile.line-scdn.net"
 	r.Header.Set("User-Agent", "okhttp/3.12.6")
 
-	resp, err := cl.client.thriftFactory.HttpClient().Do(r)
+	resp, err := s.client.thriftFactory.HttpClient().Do(r)
 	if err != nil {
 		return err
 	}
@@ -237,26 +245,29 @@ func (cl *ChannelService) DownloadContactIcon(url, path string) error {
 	return nil
 }
 
-func (cl *ChannelService) GetProfileCoverId(mid string) (string, error) {
+func (s *ChannelService) GetProfileCoverId(mid string) (string, error) {
 	r, err := http.NewRequest("GET", "https://ga2.model.naver.jp/hm/api/v1/home/profile.json?homeId="+mid+"&styleMediaVersion=v2&storyVersion=v6", nil)
 	if err != nil {
 		return "", err
 	}
 	r.Header.Set("X-Lsr", "CA")
-	channelToken, ok := cl.ChannelToken.get("1341209950")
+	channelToken, ok := s.ChannelToken.get("1341209950")
 	if !ok {
-		cl.InitChannelToken()
+		err := s.InitChannelToken()
+		if err != nil {
+			return "", err
+		}
 	}
 	r.Header.Set("X-Line-Channeltoken", channelToken)
-	r.Header.Set("X-Line-Application", cl.client.getLineApplicationHeader())
+	r.Header.Set("X-Line-Application", s.client.getLineApplicationHeader())
 	r.Header.Set("Content-Type", "application/json; charset=UTF-8")
 	r.Header.Set("X-Lal", "ja_JP")
 	r.Header.Set("X-Line-Global-Config", "discover.enable=true; follow.enable=true")
 	r.Header.Set("X-Line-Bdbtemplateversion", "v1")
 	r.Header.Set("User-Agent", "androidapp.line/11.5.2 (Linux; U; Android 5.1.1; ja-JP; G011A Build/LMY48Z)")
-	r.Header.Set("X-Line-Mid", cl.client.Profile.Mid)
+	r.Header.Set("X-Line-Mid", s.client.Profile.Mid)
 	r.Header.Set("X-Lpv", "1")
-	resp, err := cl.client.thriftFactory.HttpClient().Do(r)
+	resp, err := s.client.thriftFactory.HttpClient().Do(r)
 	if err != nil {
 		return "", err
 	}
