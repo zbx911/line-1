@@ -120,9 +120,6 @@ func (f *thriftFactory) newAccessTokenRefreshService() *model.FAccessTokenRefres
 func (f *thriftFactory) newFrugalClient(hostUrl string) *frugal.FServiceProvider {
 	fProtoc := frugal.NewFProtocolFactory(thrift.NewTCompactProtocolFactoryConf(&thrift.TConfiguration{}))
 	httpTrans := frugal.NewFHTTPTransportBuilder(f.httpClient, hostUrl).WithRequestHeaders(f.header()).Build()
-	if err := httpTrans.Open(); err != nil {
-		panic(err)
-	}
 	provider := frugal.NewFServiceProvider(httpTrans, fProtoc)
 	return provider
 }
@@ -130,9 +127,6 @@ func (f *thriftFactory) newFrugalClient(hostUrl string) *frugal.FServiceProvider
 func (f *thriftFactory) newTMCPFrugalClient(hostUrl string) *frugal.FServiceProvider {
 	fProtoc := frugal.NewFProtocolFactory(thrift.NewTMoreCompactProtocolFactoryConfAndroidLITE(&thrift.TConfiguration{}))
 	httpTrans := frugal.NewFHTTPTransportBuilder(f.httpClient, hostUrl).WithRequestHeaders(f.header()).Build()
-	if err := httpTrans.Open(); err != nil {
-		panic(err)
-	}
 	provider := frugal.NewFServiceProvider(httpTrans, fProtoc)
 	return provider
 }
