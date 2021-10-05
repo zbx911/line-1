@@ -15,7 +15,7 @@ type ClientSetting struct {
 	Proxy          string
 	LocalAddr      string
 	KeeperDir      string
-	AfterTalkError map[model.TalkErrorCode]func(err *model.TalkException) error
+	AfterTalkError map[model.TalkErrorCode]func(err *model.TalkException) error `json:"-"`
 }
 
 type ClientInfo struct {
