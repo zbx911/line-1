@@ -60,6 +60,7 @@ func (cl *Client) runTokenUpdaterBackGround() {
 				cl.ClientSetting.Logger.Error().Err(err).Msgf("stopped token updater: failed to refresh v3 token")
 				return
 			}
+			cl.ClientSetting.Logger.Info().Msgf("refreshed access token")
 			time.Sleep(time.Hour * 12)
 		}
 	}()
