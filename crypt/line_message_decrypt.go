@@ -16,7 +16,7 @@ func readBinaryArrayIntoInt(now []byte) int32 {
 	return int32(nowVar)
 }
 
-func DecryptMessage(encMsg *model.Message, keyStore E2EEKeyManagerIF) (*model.Message, error) {
+func DecryptMessage(encMsg *model.Message, keyStore *E2EEKeyStore) (*model.Message, error) {
 	senderKeyId, recipientKeyId, _ := getMessageDetails(encMsg)
 	senderKey, ok := keyStore.Get(encMsg.From, senderKeyId)
 	if !ok {
