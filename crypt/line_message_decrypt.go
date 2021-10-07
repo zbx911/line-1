@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/binary"
 	"encoding/json"
-	"fmt"
 	"github.com/line-api/model/go/model"
 	"golang.org/x/xerrors"
 	"strconv"
@@ -91,7 +90,6 @@ func intToByte(id int) []byte {
 }
 
 func parseJsonMessage(msgData []byte) *model.Message {
-	fmt.Printf("%#v\n", msgData)
 	msg := &model.Message{ContentMetadata: map[string]string{}}
 	msg.Chunks = nil
 	var jsonObj interface{}
