@@ -11,6 +11,8 @@ const (
 type E2EEKeyPair struct {
 	Owner string
 
+	KeyId int32
+
 	PrivateKeyId int32
 	PrivateKey   []byte `json:"private_key"`
 	PublicKeyId  int32
