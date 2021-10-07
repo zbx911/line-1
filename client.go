@@ -33,6 +33,7 @@ type Client struct {
 	*ChannelService
 	*TalkService
 	*AccessTokenRefreshService
+	*E2EEService
 
 	opts            []ClientOption
 	ctx             frugal.FContext
@@ -52,6 +53,7 @@ func (cl *Client) setupSessions() error {
 	cl.ChannelService = cl.newChannelService()
 	cl.TalkService = cl.newTalkService()
 	cl.AccessTokenRefreshService = cl.newAccessTokenRefreshService()
+	cl.E2EEService = cl.newE2EEService()
 	return nil
 }
 
