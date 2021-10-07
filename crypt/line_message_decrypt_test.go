@@ -1,8 +1,8 @@
 package crypt
 
 import (
-	"fmt"
 	"github.com/line-api/model/go/model"
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
@@ -24,13 +24,14 @@ func TestDecryptMessage(t *testing.T) {
 		Data: map[int32]*E2EEKeyPair{
 			//friend key
 			2867955: {
-				Owner:       "ud5f24576b50fe08177dd996b8f159f3c",
-				PublicKeyId: 2867955,
-				PublicKey:   []byte{45, 9, 210, 98, 175, 45, 246, 180, 167, 30, 129, 43, 212, 143, 226, 187, 108, 2, 177, 40, 119, 115, 10, 173, 193, 151, 235, 108, 216, 233, 35, 47},
+				Owner:     "ud5f24576b50fe08177dd996b8f159f3c",
+				KeyId:     2867955,
+				PublicKey: []byte{45, 9, 210, 98, 175, 45, 246, 180, 167, 30, 129, 43, 212, 143, 226, 187, 108, 2, 177, 40, 119, 115, 10, 173, 193, 151, 235, 108, 216, 233, 35, 47},
 			},
 			//my key
 			3424472: {
 				Owner:      "u22606689943605fe998881f7da43ce0b",
+				KeyId:      3424472,
 				PrivateKey: []byte{188, 160, 107, 245, 54, 34, 145, 248, 123, 191, 238, 121, 241, 202, 186, 45, 120, 19, 216, 163, 198, 183, 122, 177, 24, 130, 129, 186, 207, 9, 225, 144},
 				PublicKey:  []byte{42, 17, 111, 124, 87, 204, 86, 220, 193, 54, 156, 32, 23, 167, 49, 132, 61, 80, 244, 68, 20, 87, 252, 167, 95, 43, 22, 23, 249, 4, 210, 13},
 			},
@@ -39,5 +40,5 @@ func TestDecryptMessage(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	fmt.Printf("%#v\n", message)
+	assert.Equal(t, message.Text, "うむ")
 }
