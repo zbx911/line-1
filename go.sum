@@ -8,6 +8,8 @@ github.com/bot-sakura/frugal v0.0.0-20210806021528-b72d68bc7809/go.mod h1:CRz48g
 github.com/bot-sakura/thrift v0.0.0-20210729171042-6a06d63969d0/go.mod h1:AAeqmgzH2I8hVH2A2ZsCcCEl/KW3FjPa8HyumIZ6WwY=
 github.com/bot-sakura/thrift v0.0.0-20210731051304-62576fb6cfcc h1:d231NSwvh/Lc12XXH66WrDrC2QwMrTzNpki1ahEqmyA=
 github.com/bot-sakura/thrift v0.0.0-20210731051304-62576fb6cfcc/go.mod h1:AAeqmgzH2I8hVH2A2ZsCcCEl/KW3FjPa8HyumIZ6WwY=
+github.com/coyove/jsonbuilder v0.0.0-20160414062945-90ee6d2c3c43 h1:ZlTv8LWan6QnjhcXYwLOCpiN0GiD+TTrURtgvrXcmdk=
+github.com/coyove/jsonbuilder v0.0.0-20160414062945-90ee6d2c3c43/go.mod h1:q6QokArxlMhkshZXFrEfxgT2FWj6af1WPlCV76sqCAI=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
