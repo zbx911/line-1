@@ -1,7 +1,6 @@
 package crypt
 
 import (
-	"crypto/rand"
 	"encoding/base64"
 	"golang.org/x/crypto/curve25519"
 )
@@ -23,18 +22,6 @@ func NewKeyPairForCurve25519() *KeyPairForCurve25519 {
 	keyPair.PublicKey, keyPair.PrivateKey = generateCurve25519KeyPair()
 	keyPair.Nonce = genRandom16Bytes()
 	return keyPair
-}
-
-func genRandom32Bytes() *[32]byte {
-	b := new([32]byte)
-	_, _ = rand.Read(b[:])
-	return b
-}
-
-func genRandom16Bytes() *[16]byte {
-	b := new([16]byte)
-	_, _ = rand.Read(b[:])
-	return b
 }
 
 func Curve25519GenSharedSecret(privKey, pubKey []byte) ([]byte, error) {
