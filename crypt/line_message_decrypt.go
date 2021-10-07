@@ -18,11 +18,11 @@ func readBinaryArrayIntoInt(now []byte) int32 {
 
 func DecryptMessage(encMsg *model.Message, keyStore E2EEKeyManagerIF) (*model.Message, error) {
 	senderKeyId, recipientKeyId, _ := getMessageDetails(encMsg)
-	senderKey, ok := keyStore.Get(senderKeyId)
+	senderKey, ok := keyStore.Get(encMsg.From, senderKeyId)
 	if !ok {
 		return nil, xerrors.Errorf("sender key not found: %v", senderKeyId)
 	}
-	recipientKey, ok := keyStore.Get(recipientKeyId)
+	recipientKey, ok := keyStore.Get(encMsg.To, recipientKeyId)
 	if !ok {
 		return nil, xerrors.Errorf("recipient key not found: %v", senderKeyId)
 	}
