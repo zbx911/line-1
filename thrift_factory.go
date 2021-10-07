@@ -82,7 +82,7 @@ func (f *thriftFactory) newPollServiceClient() *model.FTalkServiceClient {
 }
 
 func (f *thriftFactory) newPollTMCPServiceClient() *model.FTalkServiceClient {
-	return model.NewFTalkServiceClient(f.newTMCPFrugalClient(PATH_LONG_POLLING.ToURL()))
+	return model.NewFTalkServiceClient(f.newTMCPFrugalClient(PATH_LONG_POLLING_P5.ToURL()))
 }
 
 func (f *thriftFactory) newTalkServiceClient() *model.FTalkServiceClient {
