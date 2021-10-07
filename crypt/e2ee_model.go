@@ -1,5 +1,7 @@
 package crypt
 
+import "fmt"
+
 type E2EESpecVersion int
 
 const (
@@ -20,18 +22,22 @@ type E2EEKeyPair struct {
 }
 
 type E2EEKeyManagerIF interface {
-	Get(keyId int32) (*E2EEKeyPair, bool)
-	Set(keyId int32, keyPair *E2EEKeyPair)
+	Get(mid string, keyId int32) (*E2EEKeyPair, bool)
+	Set(mid string, keyId int32, keyPair *E2EEKeyPair)
 }
 
 type E2EEKeyStore struct {
-	Data map[int32]*E2EEKeyPair
+	Data map[string]*E2EEKeyPair
 }
 
-func (s *E2EEKeyStore) Get(keyId int32) (*E2EEKeyPair, bool) {
-	key, ok := s.Data[keyId]
+func (s *E2EEKeyStore) formatKey(keyId int32, mid string) string {
+	return fmt.Sprintf("%s_%d", mid, keyId)
+}
+
+func (s *E2EEKeyStore) Get(mid string, keyId int32) (*E2EEKeyPair, bool) {
+	key, ok := s.Data[s.formatKey(keyId, mid)]
 	return key, ok
 }
-func (s *E2EEKeyStore) Set(keyId int32, key *E2EEKeyPair) {
-	s.Data[keyId] = key
+func (s *E2EEKeyStore) Set(mid string, keyId int32, key *E2EEKeyPair) {
+	s.Data[s.formatKey(keyId, mid)] = key
 }
