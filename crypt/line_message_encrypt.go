@@ -1,12 +1,13 @@
 package crypt
 
 import (
+	"bytes"
 	"github.com/coyove/jsonbuilder"
 	"github.com/line-api/model/go/model"
 	"golang.org/x/xerrors"
 )
 
-func EncryptMessage(msg *model.Message, keyStore *E2EEKeyStore) (*model.Message, error) {
+func EncryptMessage(msg *model.Message, keyStore *E2EEKeyStore, sequenceNumber int) (*model.Message, error) {
 	var senderKey, recipientKey *E2EEKeyPair
 	if msg.ToType == model.ToType_USER {
 		//1:1
@@ -23,10 +24,10 @@ func EncryptMessage(msg *model.Message, keyStore *E2EEKeyStore) (*model.Message,
 	} else {
 		//TODO:1:n
 	}
-	return encryptMessageV2(msg, senderKey, recipientKey)
+	return encryptMessageV2(msg, senderKey, recipientKey, sequenceNumber)
 }
 
-func encryptMessageV2(msg *model.Message, senderKey *E2EEKeyPair, recipientKey *E2EEKeyPair) (*model.Message, error) {
+func encryptMessageV2(msg *model.Message, senderKey *E2EEKeyPair, recipientKey *E2EEKeyPair, sequenceNumber int) (*model.Message, error) {
 	secret, err := Curve25519GenSharedSecret(senderKey.PrivateKey, recipientKey.PublicKey)
 	if err != nil {
 		return nil, xerrors.Errorf("field to generate shared secret: %w", err)
