@@ -14,15 +14,17 @@ import (
 type TalkService struct {
 	client *Client
 
-	conn           *model.FTalkServiceClient
-	connCompactMsg *model.FCompactMessageServiceClient
+	conn               *model.FTalkServiceClient
+	connCompactMsg     *model.FCompactMessageServiceClient
+	connCompactE2EEMsg *model.FCompactMessageServiceClient
 }
 
 func (cl *Client) newTalkService() *TalkService {
 	return &TalkService{
-		client:         cl,
-		conn:           cl.thriftFactory.newTalkServiceClient(),
-		connCompactMsg: cl.thriftFactory.newCompactMessageServiceClient(),
+		client:             cl,
+		conn:               cl.thriftFactory.newTalkServiceClient(),
+		connCompactMsg:     cl.thriftFactory.newCompactMessageServiceClient(),
+		connCompactE2EEMsg: cl.thriftFactory.newCompactE2EEMessageServiceClient(),
 	}
 }
 
@@ -83,6 +85,10 @@ func (cl *TalkService) SendCompactText(to, text string) (*model.Message, error) 
 func (cl *TalkService) SendMessageCompact(msg *model.Message) (*model.Message, error) {
 	newMsg, err := cl.connCompactMsg.SendMessageCompact(cl.client.ctx, cl.client.RequestSequence, msg)
 	return newMsg, err
+}
+
+func (cl *TalkService) SendE2EEMessage(msg *model.Message) (*model.Message, error) {
+	return cl.connCompactE2EEMsg.SendE2EEMessageCompact(cl.client.ctx, cl.client.RequestSequence, msg)
 }
 
 func (cl *TalkService) UnsendMessage(id string) error {
