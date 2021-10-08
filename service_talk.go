@@ -79,6 +79,11 @@ func (cl *TalkService) SendCompactMessage(to, text string) (*model.Message, erro
 	return msg, cl.client.afterError(err)
 }
 
+func (cl *TalkService) SendMessageCompact(msg *model.Message) (*model.Message, error) {
+	newMsg, err := cl.connCompactMsg.SendMessageCompact(cl.client.ctx, cl.client.RequestSequence, msg)
+	return newMsg, err
+}
+
 func (cl *TalkService) UnsendMessage(id string) error {
 	return cl.client.afterError(cl.conn.UnsendMessage(cl.client.ctx, cl.client.RequestSequence, id))
 }
