@@ -35,6 +35,12 @@ func encryptMessageV2(msg *model.Message, senderKey *E2EEKeyPair, recipientKey *
 	gcmKey := Sha256Sum(secret, salt, []byte("Key"))
 	aad := generateAAD(msg.From, msg.To, senderKey.KeyId, recipientKey.KeyId, E2EESpecVersionV2, msg.ContentType)
 
+	sign := make([]byte, 12)
+	buf := bytes.NewBuffer([]byte{})
+	buf.WriteByte(byte(sequenceNumber))
+	buf.Write(genRandomBytes(4))
+	buf.Read(sign)
+
 	cipherText, err := EncryptAesGcm(gcmKey, sign, aad, parseMessageToJson(msg))
 	if err != nil {
 		return nil, xerrors.Errorf("failed to encrypt message: %w", err)
