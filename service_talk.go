@@ -69,11 +69,12 @@ func GetMidTypeFromID(id string) model.ToType {
 	return model.ToType(-1)
 }
 
-func (cl *TalkService) SendCompactMessage(to, text string) (*model.Message, error) {
-	msg, err := cl.connCompactMsg.SendMessageCompact(cl.client.ctx, cl.client.RequestSequence, &model.Message{
+func (cl *TalkService) SendCompactText(to, text string) (*model.Message, error) {
+	msg, err := cl.SendMessageCompact(&model.Message{
 		Text:        text,
 		ToType:      GetMidTypeFromID(to),
 		To:          to,
+		From:        cl.client.Profile.Mid,
 		ContentType: model.ContentType_NONE,
 	})
 	return msg, cl.client.afterError(err)
