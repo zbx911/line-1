@@ -54,7 +54,7 @@ func (cl *Client) LoginViaV3Token(accessToken, refreshToken string) error {
 	}
 	cl.Profile.Mid = token.AuthorId
 
-	oldClient, _ := New(cl.opts...)
+	oldClient := New(cl.opts...)
 	err = oldClient.LoginViaKeeper(cl.Profile.Mid)
 	if err == nil {
 		if !oldClient.TokenManager.IsV3Token {

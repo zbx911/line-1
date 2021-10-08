@@ -128,8 +128,8 @@ func newDefaultClient() *Client {
 }
 
 // New create new line client
-func New(opts ...ClientOption) (*Client, error) {
+func New(opts ...ClientOption) *Client {
 	cl := newDefaultClient()
 	cl.opts = opts
-	return cl, nil
+	return cl
 }
