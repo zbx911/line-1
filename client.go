@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/bot-sakura/frugal"
 	"github.com/google/uuid"
-	"github.com/line-api/line/logger"
+	"github.com/line-api/line/pkg/logger"
 	"github.com/line-api/model/go/model"
 	"github.com/phuslu/log"
 	"golang.org/x/xerrors"
@@ -34,6 +34,7 @@ type Client struct {
 	*TalkService
 	*AccessTokenRefreshService
 	*E2EEService
+	*NewRegistrationService
 
 	opts            []ClientOption
 	ctx             frugal.FContext
@@ -54,6 +55,7 @@ func (cl *Client) setupSessions() error {
 	cl.TalkService = cl.newTalkService()
 	cl.AccessTokenRefreshService = cl.newAccessTokenRefreshService()
 	cl.E2EEService = cl.newE2EEService()
+	cl.NewRegistrationService = cl.newNewRegistrationService()
 	return nil
 }
 

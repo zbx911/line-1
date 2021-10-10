@@ -1,8 +1,8 @@
 package register
 
 import (
-	"github.com/line-api/line/pkg/register/phone"
-	"github.com/line-api/line/pkg/register/recaptcha"
+	"github.com/line-api/line/plugin/register/phone"
+	"github.com/line-api/line/plugin/register/recaptcha"
 )
 
 type ClientOption func(client *Client)
