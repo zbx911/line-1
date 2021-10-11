@@ -4,6 +4,7 @@ import (
 	"github.com/line-api/line"
 	"github.com/line-api/line/plugin/register/phone"
 	"github.com/line-api/line/plugin/register/recaptcha"
+	"os"
 )
 
 type ClientOption func(client *Client)
@@ -41,5 +42,14 @@ func Debug(flag bool) ClientOption {
 func AfterCreates(funcs ...func(client *line.Client) error) ClientOption {
 	return func(client *Client) {
 		client.afterCreates = append(client.afterCreates, funcs...)
+	}
+}
+
+func ProfilePicture(path string) ClientOption {
+	return func(client *Client) {
+		_, err := os.Stat(path)
+		if err == nil {
+			client.ProfileIconPath = path
+		}
 	}
 }
