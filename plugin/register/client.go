@@ -50,3 +50,14 @@ func New(lineCl *line.Client, opts ...ClientOption) (*Client, error) {
 	}
 	return cl, nil
 }
+
+func toAuthError(err error) *model.AuthException {
+	aErr, ok := err.(*model.AuthException)
+	if ok {
+		return aErr
+	}
+	return &model.AuthException{
+		Code:         -1,
+		AlertMessage: err.Error(),
+	}
+}
