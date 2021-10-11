@@ -44,7 +44,7 @@ type Client struct {
 	ClientSetting   *ClientSetting
 	ClientInfo      *ClientInfo
 	RequestSequence int32
-	thriftFactory   *thriftFactory
+	ThriftFactory   *ThriftFactory `json:"-"`
 
 	Profile  *model.Profile
 	Settings *model.Settings

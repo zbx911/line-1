@@ -9,14 +9,14 @@ import (
 	"net/url"
 )
 
-type thriftFactory struct {
+type ThriftFactory struct {
 	client        *Client
 	httpClient    *http.Client
 	defaultHeader map[string]string
 }
 
-func newThriftFactory(cl *Client) *thriftFactory {
-	return &thriftFactory{
+func newThriftFactory(cl *Client) *ThriftFactory {
+	return &ThriftFactory{
 		client:     cl,
 		httpClient: cl.defaultHttpClient(),
 		defaultHeader: map[string]string{
@@ -58,11 +58,11 @@ func parseProxyUrl(proxy string) func(*http.Request) (*url.URL, error) {
 	return http.ProxyURL(proxyUrl)
 }
 
-func (f *thriftFactory) header() map[string]string {
+func (f *ThriftFactory) header() map[string]string {
 	return f.defaultHeader
 }
 
-func (f *thriftFactory) newHeaderWithExtra(header map[string]string) map[string]string {
+func (f *ThriftFactory) newHeaderWithExtra(header map[string]string) map[string]string {
 	newHeader := make(map[string]string)
 	for k, v := range f.defaultHeader {
 		newHeader[k] = v
@@ -73,58 +73,58 @@ func (f *thriftFactory) newHeaderWithExtra(header map[string]string) map[string]
 	return newHeader
 }
 
-func (f *thriftFactory) HttpClient() *http.Client {
+func (f *ThriftFactory) HttpClient() *http.Client {
 	return f.httpClient
 }
 
-func (f *thriftFactory) newPollServiceClient() *model.FTalkServiceClient {
+func (f *ThriftFactory) newPollServiceClient() *model.FTalkServiceClient {
 	return model.NewFTalkServiceClient(f.newFrugalClient(PATH_LONG_POLLING.ToURL()))
 }
 
-func (f *thriftFactory) newPollTMCPServiceClient() *model.FTalkServiceClient {
+func (f *ThriftFactory) newPollTMCPServiceClient() *model.FTalkServiceClient {
 	return model.NewFTalkServiceClient(f.newTMCPFrugalClient(PATH_LONG_POLLING_P5.ToURL()))
 }
 
-func (f *thriftFactory) newTalkServiceClient() *model.FTalkServiceClient {
+func (f *ThriftFactory) newTalkServiceClient() *model.FTalkServiceClient {
 	return model.NewFTalkServiceClient(f.newFrugalClient(PATH_NORMAL.ToURL()))
 }
 
-func (f *thriftFactory) newCompactMessageServiceClient() *model.FCompactMessageServiceClient {
+func (f *ThriftFactory) newCompactMessageServiceClient() *model.FCompactMessageServiceClient {
 	return model.NewFCompactMessageServiceClient(f.newFrugalClient(PATH_COMPACT_MESSAGE.ToURL()))
 }
 
-func (f *thriftFactory) newCompactE2EEMessageServiceClient() *model.FCompactMessageServiceClient {
+func (f *ThriftFactory) newCompactE2EEMessageServiceClient() *model.FCompactMessageServiceClient {
 	return model.NewFCompactMessageServiceClient(f.newFrugalClient(PATH_COMPACT_E2EE_MESSAGE.ToURL()))
 }
 
-func (f *thriftFactory) newBuddyServiceClient() *model.FTalkServiceClient {
+func (f *ThriftFactory) newBuddyServiceClient() *model.FTalkServiceClient {
 	return model.NewFTalkServiceClient(f.newFrugalClient(PATH_BUDDY.ToURL()))
 }
 
-func (f *thriftFactory) newRegistrationServiceClient() *model.FTalkServiceClient {
+func (f *ThriftFactory) newRegistrationServiceClient() *model.FTalkServiceClient {
 	return model.NewFTalkServiceClient(f.newFrugalClient(PATH_REGISTRATION.ToURL()))
 }
 
-func (f *thriftFactory) newChannelServiceClient() *model.FChannelServiceClient {
+func (f *ThriftFactory) newChannelServiceClient() *model.FChannelServiceClient {
 	return model.NewFChannelServiceClient(f.newFrugalClient(PATH_CHANNEL.ToURL()))
 }
 
-func (f *thriftFactory) newNewRegistrationService() *model.FPrimaryAccountInitServiceClient {
+func (f *ThriftFactory) newNewRegistrationService() *model.FPrimaryAccountInitServiceClient {
 	return model.NewFPrimaryAccountInitServiceClient(f.newFrugalClient(PATH_NEW_REGISTRATION.ToURL()))
 }
 
-func (f *thriftFactory) newAccessTokenRefreshService() *model.FAccessTokenRefreshServiceClient {
+func (f *ThriftFactory) newAccessTokenRefreshService() *model.FAccessTokenRefreshServiceClient {
 	return model.NewFAccessTokenRefreshServiceClient(f.newFrugalClient(PATH_REFRESH_TOKEN.ToURL()))
 }
 
-func (f *thriftFactory) newFrugalClient(hostUrl string) *frugal.FServiceProvider {
+func (f *ThriftFactory) newFrugalClient(hostUrl string) *frugal.FServiceProvider {
 	fProtoc := frugal.NewFProtocolFactory(thrift.NewTCompactProtocolFactoryConf(&thrift.TConfiguration{}))
 	httpTrans := frugal.NewFHTTPTransportBuilder(f.httpClient, hostUrl).WithRequestHeaders(f.header()).Build()
 	provider := frugal.NewFServiceProvider(httpTrans, fProtoc)
 	return provider
 }
 
-func (f *thriftFactory) newTMCPFrugalClient(hostUrl string) *frugal.FServiceProvider {
+func (f *ThriftFactory) newTMCPFrugalClient(hostUrl string) *frugal.FServiceProvider {
 	fProtoc := frugal.NewFProtocolFactory(thrift.NewTMoreCompactProtocolFactoryConfAndroidLITE(&thrift.TConfiguration{}))
 	httpTrans := frugal.NewFHTTPTransportBuilder(f.httpClient, hostUrl).WithRequestHeaders(f.header()).Build()
 	provider := frugal.NewFServiceProvider(httpTrans, fProtoc)

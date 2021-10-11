@@ -11,7 +11,7 @@ type AccessTokenRefreshService struct {
 func (cl *Client) newAccessTokenRefreshService() *AccessTokenRefreshService {
 	return &AccessTokenRefreshService{
 		client: cl,
-		conn:   cl.thriftFactory.newAccessTokenRefreshService(),
+		conn:   cl.ThriftFactory.newAccessTokenRefreshService(),
 	}
 }
 
@@ -26,7 +26,7 @@ func (cl *Client) RefreshV3AccessToken() error {
 	cl.TokenManager.RefreshToken = response.RefreshToken
 	cl.TokenManager.AccessToken = response.AccessToken
 	cl.TokenManager.IsV3Token = true
-	cl.thriftFactory = newThriftFactory(cl)
+	cl.ThriftFactory = newThriftFactory(cl)
 	if err := cl.setupSessions(); err != nil {
 		return err
 	}

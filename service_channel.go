@@ -32,7 +32,7 @@ type ChannelService struct {
 func (cl *Client) newChannelService() *ChannelService {
 	return &ChannelService{
 		client:       cl,
-		conn:         cl.thriftFactory.newChannelServiceClient(),
+		conn:         cl.ThriftFactory.newChannelServiceClient(),
 		ChannelToken: ChannelToken{},
 	}
 }
@@ -84,7 +84,7 @@ func (s *ChannelService) DownloadObjMessage(msgId, path string) error {
 	r.Header.Set("X-Line-Region", "CA")
 	//r.Header.Set("Range", "bytes=0-22700")
 
-	resp, err := s.client.thriftFactory.HttpClient().Do(r)
+	resp, err := s.client.ThriftFactory.HttpClient().Do(r)
 	defer resp.Body.Close()
 	if err != nil {
 		return err
@@ -136,7 +136,7 @@ func (s *ChannelService) UpdateProfileCoverById(objId string) error {
 		"storyShare":    "true",
 	}
 	header := make(http.Header)
-	for k, v := range s.client.thriftFactory.header() {
+	for k, v := range s.client.ThriftFactory.header() {
 		header.Set(k, v)
 	}
 	for k, v := range map[string]string{
@@ -159,7 +159,7 @@ func (s *ChannelService) UpdateProfileCoverById(objId string) error {
 
 func (s *ChannelService) UploadObjHome(path string) (string, error) {
 	header := make(http.Header)
-	for k, v := range s.client.thriftFactory.header() {
+	for k, v := range s.client.ThriftFactory.header() {
 		header.Set(k, v)
 	}
 	hstr := fmt.Sprintf("Line_%d", time.Now().Unix())
@@ -204,7 +204,7 @@ func (s *ChannelService) DownloadGroupPicture(picPath, path string) error {
 	}
 	r.Header.Set("User-Agent", "okhttp/3.12.6")
 
-	resp, err := s.client.thriftFactory.HttpClient().Do(r)
+	resp, err := s.client.ThriftFactory.HttpClient().Do(r)
 	if err != nil {
 		return err
 	}
@@ -229,7 +229,7 @@ func (s *ChannelService) DownloadContactIcon(url, path string) error {
 	r.Host = "profile.line-scdn.net"
 	r.Header.Set("User-Agent", "okhttp/3.12.6")
 
-	resp, err := s.client.thriftFactory.HttpClient().Do(r)
+	resp, err := s.client.ThriftFactory.HttpClient().Do(r)
 	if err != nil {
 		return err
 	}
@@ -267,7 +267,7 @@ func (s *ChannelService) GetProfileCoverId(mid string) (string, error) {
 	r.Header.Set("User-Agent", "androidapp.line/11.5.2 (Linux; U; Android 5.1.1; ja-JP; G011A Build/LMY48Z)")
 	r.Header.Set("X-Line-Mid", s.client.Profile.Mid)
 	r.Header.Set("X-Lpv", "1")
-	resp, err := s.client.thriftFactory.HttpClient().Do(r)
+	resp, err := s.client.ThriftFactory.HttpClient().Do(r)
 	if err != nil {
 		return "", err
 	}

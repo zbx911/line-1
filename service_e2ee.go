@@ -11,8 +11,8 @@ type E2EEService struct {
 func (cl *Client) newE2EEService() *E2EEService {
 	return &E2EEService{
 		client:             cl,
-		conn:               cl.thriftFactory.newTalkServiceClient(),
-		connCompactE2EEMsg: cl.thriftFactory.newCompactE2EEMessageServiceClient(),
+		conn:               cl.ThriftFactory.newTalkServiceClient(),
+		connCompactE2EEMsg: cl.ThriftFactory.newCompactE2EEMessageServiceClient(),
 	}
 }
 

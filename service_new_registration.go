@@ -17,7 +17,7 @@ type NewRegistrationService struct {
 func (cl *Client) newNewRegistrationService() *NewRegistrationService {
 	return &NewRegistrationService{
 		client: cl,
-		conn:   cl.thriftFactory.newNewRegistrationService(),
+		conn:   cl.ThriftFactory.newNewRegistrationService(),
 	}
 }
 
@@ -35,7 +35,7 @@ func (s *NewRegistrationService) OpenSession() (string, error) {
 }
 
 func (s *NewRegistrationService) NotifyInstalled(deviceUUID, lineApplication string) error {
-	cl := s.client.thriftFactory.newRegistrationServiceClient()
+	cl := s.client.ThriftFactory.newRegistrationServiceClient()
 	return cl.NotifyInstalled(s.client.ctx, deviceUUID, lineApplication)
 }
 
@@ -121,7 +121,7 @@ func (s *NewRegistrationService) SendGoogleRecaptchaTokenToLine(details *model.W
 		Name:  "lsct_acct_init",
 		Value: details.Token[15:],
 	})
-	response, err := s.client.thriftFactory.HttpClient().Do(request)
+	response, err := s.client.ThriftFactory.HttpClient().Do(request)
 	if err != nil {
 		return err
 	}

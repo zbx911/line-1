@@ -21,8 +21,8 @@ type TalkService struct {
 func (cl *Client) newTalkService() *TalkService {
 	return &TalkService{
 		client:         cl,
-		conn:           cl.thriftFactory.newTalkServiceClient(),
-		connCompactMsg: cl.thriftFactory.newCompactMessageServiceClient(),
+		conn:           cl.ThriftFactory.newTalkServiceClient(),
+		connCompactMsg: cl.ThriftFactory.newCompactMessageServiceClient(),
 	}
 }
 
@@ -370,19 +370,19 @@ func (cl *TalkService) UpdateChatURL(chatID string, typeVar bool) error {
 }
 func (cl *TalkService) closeChatUrlManual(id string) error {
 	request, _ := http.NewRequest("POST", PATH_NORMAL.ToURL(), bytes.NewBuffer([]byte("\x82!\x00\nupdateChat\x1c\x15\x00\x1c(!"+id+"l\x1c!\x00\x00\x00\x15\x08\x00\x00")))
-	for key, value := range cl.client.thriftFactory.header() {
+	for key, value := range cl.client.ThriftFactory.header() {
 		request.Header.Set(key, value)
 	}
-	_, err := cl.client.thriftFactory.HttpClient().Do(request)
+	_, err := cl.client.ThriftFactory.HttpClient().Do(request)
 	return cl.client.afterError(err)
 }
 
 func (cl *TalkService) openChatUrlManual(id string) error {
 	request, _ := http.NewRequest("POST", PATH_NORMAL.ToURL(), bytes.NewBuffer([]byte("\x82!\x00\nupdateChat\x1c\x15\x00\x1c(!"+id+"l\x1c\x00\x00\x00\x15\x08\x00\x00")))
-	for key, value := range cl.client.thriftFactory.header() {
+	for key, value := range cl.client.ThriftFactory.header() {
 		request.Header.Set(key, value)
 	}
-	_, err := cl.client.thriftFactory.HttpClient().Do(request)
+	_, err := cl.client.ThriftFactory.HttpClient().Do(request)
 	return cl.client.afterError(err)
 }
 
