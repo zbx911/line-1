@@ -1,3 +1,5 @@
+github.com/Fef0/go-5sim v0.0.0-20200907113158-a924b6d3048a h1:77n/u6UdfsN5MVoa9XL5qin4PnaPRGvQVfLmVFAMKHk=
+github.com/Fef0/go-5sim v0.0.0-20200907113158-a924b6d3048a/go.mod h1:HeSOU29l6mNGfp/sKvYm1Ka4VwwEZJaLJLV2ErpfQfE=
 github.com/andybalholm/brotli v1.0.1/go.mod h1:loMXtMfwqflxFJPmdbJO0a3KNoPuLBgiu3qAvBg8x/Y=
 github.com/andybalholm/brotli v1.0.2/go.mod h1:loMXtMfwqflxFJPmdbJO0a3KNoPuLBgiu3qAvBg8x/Y=
 github.com/andybalholm/brotli v1.0.3 h1:fpcw+r1N1h0Poc1F/pHbW40cUm/lMEQslZtCkBQ0UnM=

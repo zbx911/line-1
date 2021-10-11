@@ -3,6 +3,7 @@ module github.com/line-api/line
 go 1.17
 
 require (
+	github.com/Fef0/go-5sim v0.0.0-20200907113158-a924b6d3048a
 	github.com/bot-sakura/frugal v0.0.0-20211008102314-16c311ce9476
 	github.com/bot-sakura/thrift v0.0.0-20210731051304-62576fb6cfcc
 	github.com/coyove/jsonbuilder v0.0.0-20160414062945-90ee6d2c3c43
