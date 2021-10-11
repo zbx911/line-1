@@ -45,5 +45,8 @@ func New(lineCl *line.Client, opts ...ClientOption) (*Client, error) {
 		return nil, err
 	}
 	cl.sessionId = sessionId
+	if err := cl.lineClient.GetCountryInfo(sessionId); err != nil {
+		return nil, err
+	}
 	return cl, nil
 }

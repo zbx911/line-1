@@ -21,6 +21,15 @@ func (cl *Client) newNewRegistrationService() *NewRegistrationService {
 	}
 }
 
+func (s *NewRegistrationService) GetCountryInfo(sessionId string) error {
+	_, err := s.conn.GetCountryInfo(s.client.ctx, sessionId, &model.SimCard{
+		CountryCode: "jp",
+		Hni:         "44010",
+		CarrierName: "NTT Docomo",
+	})
+	return err
+}
+
 func (s *NewRegistrationService) OpenSession() (string, error) {
 	return s.conn.OpenSession(s.client.ctx, &model.OpenSessionRequest{})
 }
