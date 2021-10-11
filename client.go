@@ -37,6 +37,8 @@ type Client struct {
 	*E2EEService
 	*NewRegistrationService
 
+	HeaderFactory *HeaderFactory
+
 	opts            []ClientOption
 	ctx             frugal.FContext
 	ClientSetting   *ClientSetting
@@ -70,24 +72,24 @@ func (cl *Client) executeOpts() error {
 	return nil
 }
 
-func (cl *Client) getLineApplicationHeader() string {
+func (cl *Client) GetLineApplicationHeader() string {
 	switch cl.ClientSetting.AppType {
 	case model.ApplicationType_ANDROID:
-		return fmt.Sprintf("ANDROID\t%v\tAndroid OS\t%v", AndroidAppVersion, AndroidVersion)
+		return fmt.Sprintf("ANDROID\t%v\tAndroid OS\t%v", cl.HeaderFactory.AndroidAppVersion, cl.HeaderFactory.AndroidVersion)
 	case model.ApplicationType_ANDROIDLITE:
-		return fmt.Sprintf("ANDROIDLITE\t%v\tAndroid OS\t%v", AndroidLiteAppVersion, AndroidVersion)
+		return fmt.Sprintf("ANDROIDLITE\t%v\tAndroid OS\t%v", cl.HeaderFactory.AndroidLiteAppVersion, cl.HeaderFactory.AndroidVersion)
 	case model.ApplicationType_IOS:
 		return "IOS\t11.9.0\tiOS\t14.5.1"
 	}
 	panic("unsupported app type")
 }
 
-func (cl *Client) getLineUserAgentHeader() string {
+func (cl *Client) GetLineUserAgentHeader() string {
 	switch cl.ClientSetting.AppType {
 	case model.ApplicationType_ANDROID:
-		return fmt.Sprintf("Line/%v", AndroidAppVersion)
+		return fmt.Sprintf("Line/%v", cl.HeaderFactory.AndroidAppVersion)
 	case model.ApplicationType_ANDROIDLITE:
-		return fmt.Sprintf("LLA/%v %v %v", AndroidLiteAppVersion, cl.ClientInfo.Device.DeviceModel, AndroidVersion)
+		return fmt.Sprintf("LLA/%v %v %v", cl.HeaderFactory.AndroidLiteAppVersion, cl.ClientInfo.Device.DeviceModel, cl.HeaderFactory.AndroidVersion)
 	case model.ApplicationType_IOS:
 		return "Line/11.9.0"
 	}
@@ -122,6 +124,11 @@ func newDefaultClient() *Client {
 		TokenManager: &TokenManager{},
 		Profile:      &model.Profile{},
 		Settings:     &model.Settings{},
+		HeaderFactory: &HeaderFactory{
+			AndroidVersion:        getRandomAndroidVersion(),
+			AndroidAppVersion:     getRandomAndroidAppVersion(),
+			AndroidLiteAppVersion: getRandomAndroidLiteAppVersion(),
+		},
 	}
 	cl.ClientSetting.AfterTalkError = map[model.TalkErrorCode]func(err *model.TalkException) error{
 		model.TalkErrorCode_MUST_REFRESH_V3_TOKEN: func(talkErr *model.TalkException) error {
