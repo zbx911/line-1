@@ -10,7 +10,7 @@ func TestNew(t *testing.T) {
 	cl := New()
 	assert.Equal(t, model.ApplicationType_ANDROID, cl.ClientSetting.AppType)
 	assert.Equal(t, "", cl.ClientSetting.Proxy)
-	assert.Equal(t, "./keepers/", cl.ClientSetting.KeeperDir)
+	assert.Equal(t, "C:\\Users\\Sakura/.line-keepers/", cl.ClientSetting.KeeperDir)
 }
 
 func TestNewWithOpts(t *testing.T) {

@@ -8,6 +8,7 @@ import (
 	"github.com/line-api/model/go/model"
 	"github.com/phuslu/log"
 	"golang.org/x/xerrors"
+	"os"
 	"strings"
 )
 
@@ -101,13 +102,18 @@ func newLineDevice() *model.Device {
 	}
 }
 
+func getHomeDir() string {
+	home, _ := os.UserHomeDir()
+	return home
+}
+
 // create default line client
 func newDefaultClient() *Client {
 	cl := &Client{
 		ctx: frugal.NewFContext(""),
 		ClientSetting: &ClientSetting{
 			AppType:   model.ApplicationType_ANDROID,
-			KeeperDir: "./keepers/",
+			KeeperDir: getHomeDir() + "/.line-keepers/",
 			Logger:    logger.New(),
 		},
 		ClientInfo: &ClientInfo{
