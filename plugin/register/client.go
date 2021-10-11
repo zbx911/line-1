@@ -31,6 +31,8 @@ func New(lineCl *line.Client, opts ...ClientOption) *Client {
 		lineClient:      lineCl,
 		recaptchaSolver: recaptcha.NewTwoCaptcha(os.Getenv("TWO_CAPTCHA_API_KEY")),
 		phoneService:    phone.NewFiveSim(os.Getenv("FIVE_SIM_API_KEY")),
+		Password:        line.MakeRandomStr(12),
+		Name:            line.MakeRandomStr(7),
 	}
 	for _, op := range opts {
 		op(cl)
