@@ -3,8 +3,8 @@ package register
 import (
 	"github.com/bot-sakura/frugal"
 	"github.com/line-api/line"
-	phone2 "github.com/line-api/line/plugin/register/phone"
-	recaptcha2 "github.com/line-api/line/plugin/register/recaptcha"
+	"github.com/line-api/line/plugin/register/phone"
+	"github.com/line-api/line/plugin/register/recaptcha"
 	"github.com/line-api/model/go/model"
 	"os"
 )
@@ -12,8 +12,8 @@ import (
 type Client struct {
 	lineClient *line.Client
 
-	recaptchaSolver recaptcha2.Solver
-	phoneService    phone2.Service
+	recaptchaSolver recaptcha.Solver
+	phoneService    phone.Service
 
 	sessionId string
 	ctx       frugal.FContext
@@ -28,8 +28,8 @@ type Client struct {
 func New(lineCl *line.Client, opts ...ClientOption) *Client {
 	cl := &Client{
 		lineClient:      lineCl,
-		recaptchaSolver: recaptcha2.NewTwoCaptcha(os.Getenv("TWO_CAPTCHA_API_KEY")),
-		phoneService:    phone2.NewFiveSim(os.Getenv("FIVE_SIM_API_KEY")),
+		recaptchaSolver: recaptcha.NewTwoCaptcha(os.Getenv("TWO_CAPTCHA_API_KEY")),
+		phoneService:    phone.NewFiveSim(os.Getenv("FIVE_SIM_API_KEY")),
 	}
 	for _, op := range opts {
 		op(cl)
