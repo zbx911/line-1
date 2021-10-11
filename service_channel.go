@@ -53,13 +53,13 @@ func (s *ChannelService) InitChannelToken() error {
 
 func (s *ChannelService) UpdateGroupPicture(gid, imagePath string) error {
 	header := make(http.Header)
-	header.Set("X-Line-Application", s.client.getLineApplicationHeader())
+	header.Set("X-Line-Application", s.client.GetLineApplicationHeader())
 	header.Set("X-Line-Access", s.client.TokenManager.AccessToken)
 	header.Set("X-Lal", "ja_jp")
 	header.Set("Quality", "95")
 	header.Set("X-Line-Region", "CA")
 	header.Set("X-Line-Carrier", "44070")
-	header.Set("User-Agent", s.client.getLineUserAgentHeader())
+	header.Set("User-Agent", s.client.GetLineUserAgentHeader())
 	header.Set("Content-Type", "image/jpeg")
 	file, _ := os.Open(imagePath)
 	if s.client.ClientSetting.Proxy != "" {
@@ -76,9 +76,9 @@ func (s *ChannelService) DownloadObjMessage(msgId, path string) error {
 		return err
 	}
 	r.Host = "obs-jp.line-apps.com"
-	r.Header.Set("X-Line-Application", s.client.getLineApplicationHeader())
+	r.Header.Set("X-Line-Application", s.client.GetLineApplicationHeader())
 	r.Header.Set("X-Line-Carrier", "44070")
-	r.Header.Set("User-Agent", s.client.getLineUserAgentHeader())
+	r.Header.Set("User-Agent", s.client.GetLineUserAgentHeader())
 	r.Header.Set("X-Line-Access", s.client.TokenManager.AccessToken)
 	r.Header.Set("X-Lal", "ja_jp")
 	r.Header.Set("X-Line-Region", "CA")
@@ -103,13 +103,13 @@ func (s *ChannelService) DownloadObjMessage(msgId, path string) error {
 func (s *ChannelService) UpdateProfilePicture(path string) error {
 	host := "https://obs-jp.line-apps.com/os/p/" + s.client.Profile.Mid
 	header := make(http.Header)
-	header.Set("X-Line-Application", s.client.getLineApplicationHeader())
+	header.Set("X-Line-Application", s.client.GetLineApplicationHeader())
 	header.Set("X-Line-Access", s.client.TokenManager.AccessToken)
 	header.Set("X-Lal", "ja_jp")
 	header.Set("Quality", "95")
 	header.Set("X-Line-Region", "CA")
 	header.Set("X-Line-Carrier", "44070")
-	header.Set("User-Agent", s.client.getLineUserAgentHeader())
+	header.Set("User-Agent", s.client.GetLineUserAgentHeader())
 	header.Set("Content-Type", "image/jpeg")
 
 	file, _ := os.Open(path)
@@ -259,7 +259,7 @@ func (s *ChannelService) GetProfileCoverId(mid string) (string, error) {
 		}
 	}
 	r.Header.Set("X-Line-Channeltoken", channelToken)
-	r.Header.Set("X-Line-Application", s.client.getLineApplicationHeader())
+	r.Header.Set("X-Line-Application", s.client.GetLineApplicationHeader())
 	r.Header.Set("Content-Type", "application/json; charset=UTF-8")
 	r.Header.Set("X-Lal", "ja_JP")
 	r.Header.Set("X-Line-Global-Config", "discover.enable=true; follow.enable=true")

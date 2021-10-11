@@ -20,9 +20,9 @@ func newThriftFactory(cl *Client) *thriftFactory {
 		client:     cl,
 		httpClient: cl.defaultHttpClient(),
 		defaultHeader: map[string]string{
-			"x-line-application": cl.getLineApplicationHeader(),
+			"x-line-application": cl.GetLineApplicationHeader(),
 			"x-line-access":      cl.TokenManager.AccessToken,
-			"user-agent":         cl.getLineUserAgentHeader(),
+			"user-agent":         cl.GetLineUserAgentHeader(),
 			"x-lal":              "ja_JP",
 			"x-lpv":              "1",
 		},
