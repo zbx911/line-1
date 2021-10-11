@@ -26,7 +26,7 @@ type Client struct {
 	afterCreates    []func(client *line.Client) error
 }
 
-func New(lineCl *line.Client, opts ...ClientOption) *Client {
+func New(lineCl *line.Client, opts ...ClientOption) (*Client, error) {
 	cl := &Client{
 		lineClient:      lineCl,
 		recaptchaSolver: recaptcha.NewTwoCaptcha(os.Getenv("TWO_CAPTCHA_API_KEY")),
@@ -37,5 +37,13 @@ func New(lineCl *line.Client, opts ...ClientOption) *Client {
 	for _, op := range opts {
 		op(cl)
 	}
-	return cl
+	if err := cl.lineClient.NotifyInstalled(cl.lineClient.ClientInfo.Device.Udid, cl.lineClient.GetLineApplicationHeader()); err != nil {
+		return nil, err
+	}
+	sessionId, err := cl.lineClient.OpenSession()
+	if err != nil {
+		return nil, err
+	}
+	cl.sessionId = sessionId
+	return cl, nil
 }
