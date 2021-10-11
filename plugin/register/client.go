@@ -18,6 +18,11 @@ type Client struct {
 	sessionId string
 	ctx       frugal.FContext
 	userPhone *model.UserPhoneNumber
+
+	Password     string
+	Name         string
+	Debug        bool
+	afterCreates []func(client *line.Client) error
 }
 
 func New(lineCl *line.Client, opts ...ClientOption) *Client {
