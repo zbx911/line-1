@@ -7,6 +7,7 @@ require (
 	github.com/bot-sakura/frugal v0.0.0-20211008102314-16c311ce9476
 	github.com/bot-sakura/thrift v0.0.0-20210731051304-62576fb6cfcc
 	github.com/coyove/jsonbuilder v0.0.0-20160414062945-90ee6d2c3c43
+	github.com/davegardnerisme/phonegeocode v0.0.0-20160120101024-a49b977f8889
 	github.com/google/uuid v1.3.0
 	github.com/imroc/req v0.3.0
 	github.com/line-api/model/go/model v0.0.0-20211005023005-5a867a66091e
@@ -26,6 +27,7 @@ require (
 	github.com/nats-io/nuid v1.0.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/sirupsen/logrus v1.8.1 // indirect
+	github.com/tchap/go-patricia v1.0.1 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.30.0 // indirect
 	golang.org/x/sys v0.0.0-20211007075335-d3039528d8ac // indirect
