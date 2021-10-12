@@ -50,6 +50,8 @@ type Client struct {
 	Settings *model.Settings
 
 	TokenManager *TokenManager
+
+	E2EEKeyStore *E2EEKeyStore
 }
 
 func (cl *Client) setupSessions() error {
@@ -129,6 +131,7 @@ func newDefaultClient() *Client {
 			AndroidAppVersion:     getRandomAndroidAppVersion(),
 			AndroidLiteAppVersion: getRandomAndroidLiteAppVersion(),
 		},
+		E2EEKeyStore: NewE2EEKeyStore(),
 	}
 	cl.ClientSetting.AfterTalkError = map[model.TalkErrorCode]func(err *model.TalkException) error{
 		model.TalkErrorCode_MUST_REFRESH_V3_TOKEN: func(talkErr *model.TalkException) error {
