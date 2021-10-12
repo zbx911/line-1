@@ -47,7 +47,7 @@ func (s *NewRegistrationService) GetPhoneVerifMethodV2(sessionId string, device 
 	})
 }
 
-func (s *NewRegistrationService) SendPinCodeFOrPhone(sessionId string, phone *model.UserPhoneNumber, method model.PhoneVerifMethodV2) (*model.ReqToSendPhonePinCodeResponse, error) {
+func (s *NewRegistrationService) RequestToSendPhonePinCode(sessionId string, phone *model.UserPhoneNumber, method model.PhoneVerifMethodV2) (*model.ReqToSendPhonePinCodeResponse, error) {
 	return s.conn.RequestToSendPhonePinCode(s.client.ctx, &model.ReqToSendPhonePinCodeRequest{
 		AuthSessionId:   sessionId,
 		UserPhoneNumber: phone,
