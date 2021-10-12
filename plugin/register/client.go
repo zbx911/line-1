@@ -3,6 +3,7 @@ package register
 import (
 	"github.com/bot-sakura/frugal"
 	"github.com/line-api/line"
+	"github.com/line-api/line/crypt"
 	"github.com/line-api/line/plugin/register/phone"
 	"github.com/line-api/line/plugin/register/recaptcha"
 	"github.com/line-api/model/go/model"
@@ -18,6 +19,7 @@ type Client struct {
 	sessionId string
 	ctx       frugal.FContext
 	userPhone *model.UserPhoneNumber
+	myKey     *crypt.KeyPairForCurve25519
 
 	Password        string
 	Name            string
