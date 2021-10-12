@@ -6,21 +6,21 @@ import (
 )
 
 type KeyPairForCurve25519 struct {
-	PrivateKey *[32]byte `json:"private_key"`
-	PublicKey  *[32]byte `json:"public_key"`
-	Nonce      *[16]byte `json:"nonce"`
+	PrivateKey []byte `json:"private_key"`
+	PublicKey  []byte `json:"public_key"`
+	Nonce      []byte `json:"nonce"`
 }
 
-func generateCurve25519KeyPair() (*[32]byte, *[32]byte) {
+func generateCurve25519KeyPair() ([]byte, []byte) {
 	pub, pri := new([32]byte), genRandom32Bytes()
 	curve25519.ScalarBaseMult(pub, pri)
-	return pub, pri
+	return pub[:], pri[:]
 }
 
 func NewKeyPairForCurve25519() *KeyPairForCurve25519 {
 	keyPair := &KeyPairForCurve25519{}
 	keyPair.PublicKey, keyPair.PrivateKey = generateCurve25519KeyPair()
-	keyPair.Nonce = genRandom16Bytes()
+	keyPair.Nonce = genRandomBytes(16)
 	return keyPair
 }
 
@@ -29,21 +29,21 @@ func Curve25519GenSharedSecret(privKey, pubKey []byte) ([]byte, error) {
 }
 
 func (k *KeyPairForCurve25519) StringPubKey() string {
-	return string(k.PublicKey[:])
+	return string(k.PublicKey)
 }
 func (k *KeyPairForCurve25519) StringPrivKey() string {
-	return string(k.PrivateKey[:])
+	return string(k.PrivateKey)
 }
 func (k *KeyPairForCurve25519) StringNonce() string {
-	return string(k.Nonce[:])
+	return string(k.Nonce)
 }
 
 func (k *KeyPairForCurve25519) B64EncodedStringPubKey() string {
-	return base64.StdEncoding.EncodeToString(k.PublicKey[:])
+	return base64.StdEncoding.EncodeToString(k.PublicKey)
 }
 func (k *KeyPairForCurve25519) B64EncodedStringPrivKey() string {
-	return base64.StdEncoding.EncodeToString(k.PrivateKey[:])
+	return base64.StdEncoding.EncodeToString(k.PrivateKey)
 }
 func (k *KeyPairForCurve25519) B64EncodedStringNonce() string {
-	return base64.StdEncoding.EncodeToString(k.Nonce[:])
+	return base64.StdEncoding.EncodeToString(k.Nonce)
 }
