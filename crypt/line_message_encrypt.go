@@ -7,7 +7,7 @@ import (
 	"golang.org/x/xerrors"
 )
 
-func EncryptMessage(msg *model.Message, keyStore *E2EEKeyStore, sequenceNumber int) (*model.Message, error) {
+func EncryptMessage(msg *model.Message, keyStore KeyStore, sequenceNumber int) (*model.Message, error) {
 	var senderKey, recipientKey *E2EEKeyPair
 	if msg.ToType == model.ToType_USER {
 		//1:1
